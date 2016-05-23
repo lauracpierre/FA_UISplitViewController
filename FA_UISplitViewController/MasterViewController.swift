@@ -17,9 +17,10 @@ class MasterViewController: UITableViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
-    self.navigationItem.leftBarButtonItem = self.editButtonItem()
 
-    let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: "insertNewObject:")
+    self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Menu", style: .Plain, target: self, action: #selector(MasterViewController.showMenu))
+
+    let addButton = UIBarButtonItem(barButtonSystemItem: .Add, target: self, action: #selector(MasterViewController.insertNewObject(_:)))
     self.navigationItem.rightBarButtonItem = addButton
     if let split = self.splitViewController {
         let controllers = split.viewControllers
@@ -42,6 +43,10 @@ class MasterViewController: UITableViewController {
     let indexPath = NSIndexPath(forRow: 0, inSection: 0)
     self.tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
   }
+  
+  func showMenu() {
+      NSNotificationCenter.defaultCenter().postNotificationName("SHOW_MENU", object: nil)
+  }
 
   // MARK: - Segues
 
@@ -51,10 +56,15 @@ class MasterViewController: UITableViewController {
             let object = objects[indexPath.row] as! NSDate
             let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
             controller.detailItem = object
-            controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+        //controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+         controller.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Master", style: .Plain, target: self, action: #selector(MasterViewController.master))
             controller.navigationItem.leftItemsSupplementBackButton = true
         }
     }
+  }
+  
+  func master() {
+    NSNotificationCenter.defaultCenter().postNotificationName("SHOW_MASTER", object: nil)
   }
 
   // MARK: - Table View

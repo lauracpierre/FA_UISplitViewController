@@ -7,16 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A11CBF51CF37695000E0D9A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F9D1CEBC59E007C73F1 /* Info.plist */; };
 		7AB38F901CEBC59E007C73F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38F8F1CEBC59E007C73F1 /* AppDelegate.swift */; };
 		7AB38F921CEBC59E007C73F1 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38F911CEBC59E007C73F1 /* MasterViewController.swift */; };
 		7AB38F941CEBC59E007C73F1 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38F931CEBC59E007C73F1 /* DetailViewController.swift */; };
 		7AB38F971CEBC59E007C73F1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F951CEBC59E007C73F1 /* Main.storyboard */; };
 		7AB38F991CEBC59E007C73F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F981CEBC59E007C73F1 /* Assets.xcassets */; };
 		7AB38F9C1CEBC59E007C73F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F9A1CEBC59E007C73F1 /* LaunchScreen.storyboard */; };
+		7AB38FA41CEBE173007C73F1 /* MillefeuilleviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */; };
+		7AB38FA61CEBE279007C73F1 /* FA_MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */; };
+		7AB38FC81CEFBE70007C73F1 /* IMG_2121.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38FC71CEFBE70007C73F1 /* IMG_2121.JPG */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7AB38F8C1CEBC59E007C73F1 /* test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = test.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7AB38F8C1CEBC59E007C73F1 /* FA_UISplitViewController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FA_UISplitViewController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AB38F8F1CEBC59E007C73F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AB38F911CEBC59E007C73F1 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		7AB38F931CEBC59E007C73F1 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
@@ -24,6 +28,9 @@
 		7AB38F981CEBC59E007C73F1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7AB38F9B1CEBC59E007C73F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7AB38F9D1CEBC59E007C73F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MillefeuilleviewController.swift; sourceTree = "<group>"; };
+		7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FA_MenuViewController.swift; sourceTree = "<group>"; };
+		7AB38FC71CEFBE70007C73F1 /* IMG_2121.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = IMG_2121.JPG; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,7 +47,7 @@
 		7AB38F831CEBC59E007C73F1 = {
 			isa = PBXGroup;
 			children = (
-				7AB38F8E1CEBC59E007C73F1 /* test */,
+				7AB38F8E1CEBC59E007C73F1 /* FA_UISplitViewController */,
 				7AB38F8D1CEBC59E007C73F1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -48,14 +55,15 @@
 		7AB38F8D1CEBC59E007C73F1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7AB38F8C1CEBC59E007C73F1 /* test.app */,
+				7AB38F8C1CEBC59E007C73F1 /* FA_UISplitViewController.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		7AB38F8E1CEBC59E007C73F1 /* test */ = {
+		7AB38F8E1CEBC59E007C73F1 /* FA_UISplitViewController */ = {
 			isa = PBXGroup;
 			children = (
+				7AB38FC71CEFBE70007C73F1 /* IMG_2121.JPG */,
 				7AB38F8F1CEBC59E007C73F1 /* AppDelegate.swift */,
 				7AB38F911CEBC59E007C73F1 /* MasterViewController.swift */,
 				7AB38F931CEBC59E007C73F1 /* DetailViewController.swift */,
@@ -63,16 +71,18 @@
 				7AB38F981CEBC59E007C73F1 /* Assets.xcassets */,
 				7AB38F9A1CEBC59E007C73F1 /* LaunchScreen.storyboard */,
 				7AB38F9D1CEBC59E007C73F1 /* Info.plist */,
+				7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */,
+				7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */,
 			);
-			path = test;
+			path = FA_UISplitViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7AB38F8B1CEBC59E007C73F1 /* test */ = {
+		7AB38F8B1CEBC59E007C73F1 /* FA_UISplitViewController */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7AB38FA01CEBC59E007C73F1 /* Build configuration list for PBXNativeTarget "test" */;
+			buildConfigurationList = 7AB38FA01CEBC59E007C73F1 /* Build configuration list for PBXNativeTarget "FA_UISplitViewController" */;
 			buildPhases = (
 				7AB38F881CEBC59E007C73F1 /* Sources */,
 				7AB38F891CEBC59E007C73F1 /* Frameworks */,
@@ -82,9 +92,9 @@
 			);
 			dependencies = (
 			);
-			name = test;
+			name = FA_UISplitViewController;
 			productName = test;
-			productReference = 7AB38F8C1CEBC59E007C73F1 /* test.app */;
+			productReference = 7AB38F8C1CEBC59E007C73F1 /* FA_UISplitViewController.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -99,10 +109,11 @@
 				TargetAttributes = {
 					7AB38F8B1CEBC59E007C73F1 = {
 						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = X549L7572J;
 					};
 				};
 			};
-			buildConfigurationList = 7AB38F871CEBC59E007C73F1 /* Build configuration list for PBXProject "test" */;
+			buildConfigurationList = 7AB38F871CEBC59E007C73F1 /* Build configuration list for PBXProject "FA_UISplitViewController" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -115,7 +126,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7AB38F8B1CEBC59E007C73F1 /* test */,
+				7AB38F8B1CEBC59E007C73F1 /* FA_UISplitViewController */,
 			);
 		};
 /* End PBXProject section */
@@ -125,7 +136,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A11CBF51CF37695000E0D9A /* Info.plist in Resources */,
 				7AB38F9C1CEBC59E007C73F1 /* LaunchScreen.storyboard in Resources */,
+				7AB38FC81CEFBE70007C73F1 /* IMG_2121.JPG in Resources */,
 				7AB38F991CEBC59E007C73F1 /* Assets.xcassets in Resources */,
 				7AB38F971CEBC59E007C73F1 /* Main.storyboard in Resources */,
 			);
@@ -140,6 +153,8 @@
 			files = (
 				7AB38F941CEBC59E007C73F1 /* DetailViewController.swift in Sources */,
 				7AB38F921CEBC59E007C73F1 /* MasterViewController.swift in Sources */,
+				7AB38FA41CEBE173007C73F1 /* MillefeuilleviewController.swift in Sources */,
+				7AB38FA61CEBE279007C73F1 /* FA_MenuViewController.swift in Sources */,
 				7AB38F901CEBC59E007C73F1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -255,10 +270,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = test/Info.plist;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				INFOPLIST_FILE = FA_UISplitViewController/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = FA.test;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
+				PRODUCT_NAME = FA_UISplitViewController;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -266,17 +284,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				INFOPLIST_FILE = test/Info.plist;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				INFOPLIST_FILE = FA_UISplitViewController/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = FA.test;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
+				PRODUCT_NAME = FA_UISplitViewController;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7AB38F871CEBC59E007C73F1 /* Build configuration list for PBXProject "test" */ = {
+		7AB38F871CEBC59E007C73F1 /* Build configuration list for PBXProject "FA_UISplitViewController" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7AB38F9E1CEBC59E007C73F1 /* Debug */,
@@ -285,13 +306,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7AB38FA01CEBC59E007C73F1 /* Build configuration list for PBXNativeTarget "test" */ = {
+		7AB38FA01CEBC59E007C73F1 /* Build configuration list for PBXNativeTarget "FA_UISplitViewController" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7AB38FA11CEBC59E007C73F1 /* Debug */,
 				7AB38FA21CEBC59E007C73F1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

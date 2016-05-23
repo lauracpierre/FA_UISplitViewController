@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7AB38F8B1CEBC59E007C73F1"
-               BuildableName = "test.app"
-               BlueprintName = "test"
-               ReferencedContainer = "container:test.xcodeproj">
+               BuildableName = "FA_UISplitViewController.app"
+               BlueprintName = "FA_UISplitViewController"
+               ReferencedContainer = "container:FA_UISplitViewController.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7AB38F8B1CEBC59E007C73F1"
-            BuildableName = "test.app"
-            BlueprintName = "test"
-            ReferencedContainer = "container:test.xcodeproj">
+            BuildableName = "FA_UISplitViewController.app"
+            BlueprintName = "FA_UISplitViewController"
+            ReferencedContainer = "container:FA_UISplitViewController.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -56,9 +56,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7AB38F8B1CEBC59E007C73F1"
-            BuildableName = "test.app"
-            BlueprintName = "test"
-            ReferencedContainer = "container:test.xcodeproj">
+            BuildableName = "FA_UISplitViewController.app"
+            BlueprintName = "FA_UISplitViewController"
+            ReferencedContainer = "container:FA_UISplitViewController.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -75,9 +75,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7AB38F8B1CEBC59E007C73F1"
-            BuildableName = "test.app"
-            BlueprintName = "test"
-            ReferencedContainer = "container:test.xcodeproj">
+            BuildableName = "FA_UISplitViewController.app"
+            BlueprintName = "FA_UISplitViewController"
+            ReferencedContainer = "container:FA_UISplitViewController.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
