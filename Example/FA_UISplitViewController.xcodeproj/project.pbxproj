@@ -7,33 +7,39 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7A019E5F1D09E95500852D21 /* FA_leftMenuImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A019E5E1D09E95500852D21 /* FA_leftMenuImplementation.swift */; };
 		7A019E611D0A0E6F00852D21 /* Master2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A019E601D0A0E6F00852D21 /* Master2ViewController.swift */; };
+		7A019E651D0B5DB200852D21 /* FA_UISplitViewController.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 7A019E621D0B5DB200852D21 /* FA_UISplitViewController.podspec */; };
+		7A019E661D0B5DB200852D21 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7A019E631D0B5DB200852D21 /* LICENSE */; };
+		7A019E671D0B5DB200852D21 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 7A019E641D0B5DB200852D21 /* README.md */; };
 		7A11CBF51CF37695000E0D9A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F9D1CEBC59E007C73F1 /* Info.plist */; };
+		7AB1AC871D0B7422001FFB31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB1AC831D0B7422001FFB31 /* LaunchScreen.storyboard */; };
+		7AB1AC881D0B7422001FFB31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB1AC851D0B7422001FFB31 /* Main.storyboard */; };
+		7AB1AC8A1D0B750E001FFB31 /* FA_leftMenuImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB1AC891D0B750E001FFB31 /* FA_leftMenuImplementation.swift */; };
 		7AB38F901CEBC59E007C73F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38F8F1CEBC59E007C73F1 /* AppDelegate.swift */; };
 		7AB38F921CEBC59E007C73F1 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38F911CEBC59E007C73F1 /* MasterViewController.swift */; };
 		7AB38F941CEBC59E007C73F1 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38F931CEBC59E007C73F1 /* DetailViewController.swift */; };
-		7AB38F971CEBC59E007C73F1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F951CEBC59E007C73F1 /* Main.storyboard */; };
 		7AB38F991CEBC59E007C73F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F981CEBC59E007C73F1 /* Assets.xcassets */; };
-		7AB38F9C1CEBC59E007C73F1 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F9A1CEBC59E007C73F1 /* LaunchScreen.storyboard */; };
 		7AB38FA41CEBE173007C73F1 /* MillefeuilleviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */; };
 		7AB38FA61CEBE279007C73F1 /* FA_MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */; };
 		7AB38FC81CEFBE70007C73F1 /* IMG_2121.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38FC71CEFBE70007C73F1 /* IMG_2121.JPG */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7A019E5E1D09E95500852D21 /* FA_leftMenuImplementation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FA_leftMenuImplementation.swift; sourceTree = "<group>"; };
 		7A019E601D0A0E6F00852D21 /* Master2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Master2ViewController.swift; sourceTree = "<group>"; };
+		7A019E621D0B5DB200852D21 /* FA_UISplitViewController.podspec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = FA_UISplitViewController.podspec; path = ../FA_UISplitViewController.podspec; sourceTree = "<group>"; };
+		7A019E631D0B5DB200852D21 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		7A019E641D0B5DB200852D21 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		7AB1AC841D0B7422001FFB31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		7AB1AC861D0B7422001FFB31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		7AB1AC891D0B750E001FFB31 /* FA_leftMenuImplementation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FA_leftMenuImplementation.swift; sourceTree = "<group>"; };
 		7AB38F8C1CEBC59E007C73F1 /* FA_UISplitViewController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FA_UISplitViewController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AB38F8F1CEBC59E007C73F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AB38F911CEBC59E007C73F1 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		7AB38F931CEBC59E007C73F1 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
-		7AB38F961CEBC59E007C73F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7AB38F981CEBC59E007C73F1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		7AB38F9B1CEBC59E007C73F1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		7AB38F9D1CEBC59E007C73F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MillefeuilleviewController.swift; sourceTree = "<group>"; };
-		7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FA_MenuViewController.swift; sourceTree = "<group>"; };
+		7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MillefeuilleviewController.swift; path = ../Pod/MillefeuilleviewController.swift; sourceTree = "<group>"; };
+		7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FA_MenuViewController.swift; path = ../Pod/FA_MenuViewController.swift; sourceTree = "<group>"; };
 		7AB38FC71CEFBE70007C73F1 /* IMG_2121.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = IMG_2121.JPG; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -48,9 +54,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7A019E681D0B5F2000852D21 /* Pod */ = {
+			isa = PBXGroup;
+			children = (
+				7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */,
+				7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */,
+			);
+			name = Pod;
+			sourceTree = "<group>";
+		};
+		7A019E691D0B5F2600852D21 /* Example */ = {
+			isa = PBXGroup;
+			children = (
+				7AB1AC831D0B7422001FFB31 /* LaunchScreen.storyboard */,
+				7AB1AC851D0B7422001FFB31 /* Main.storyboard */,
+				7AB38FC71CEFBE70007C73F1 /* IMG_2121.JPG */,
+				7AB38F8F1CEBC59E007C73F1 /* AppDelegate.swift */,
+				7AB38F911CEBC59E007C73F1 /* MasterViewController.swift */,
+				7AB38F931CEBC59E007C73F1 /* DetailViewController.swift */,
+				7AB38F981CEBC59E007C73F1 /* Assets.xcassets */,
+				7AB38F9D1CEBC59E007C73F1 /* Info.plist */,
+				7AB1AC891D0B750E001FFB31 /* FA_leftMenuImplementation.swift */,
+				7A019E601D0A0E6F00852D21 /* Master2ViewController.swift */,
+			);
+			name = Example;
+			sourceTree = "<group>";
+		};
 		7AB38F831CEBC59E007C73F1 = {
 			isa = PBXGroup;
 			children = (
+				7A019E691D0B5F2600852D21 /* Example */,
+				7A019E681D0B5F2000852D21 /* Pod */,
+				7A019E621D0B5DB200852D21 /* FA_UISplitViewController.podspec */,
+				7A019E631D0B5DB200852D21 /* LICENSE */,
+				7A019E641D0B5DB200852D21 /* README.md */,
 				7AB38F8E1CEBC59E007C73F1 /* FA_UISplitViewController */,
 				7AB38F8D1CEBC59E007C73F1 /* Products */,
 			);
@@ -67,18 +104,6 @@
 		7AB38F8E1CEBC59E007C73F1 /* FA_UISplitViewController */ = {
 			isa = PBXGroup;
 			children = (
-				7AB38FC71CEFBE70007C73F1 /* IMG_2121.JPG */,
-				7AB38F8F1CEBC59E007C73F1 /* AppDelegate.swift */,
-				7AB38F911CEBC59E007C73F1 /* MasterViewController.swift */,
-				7AB38F931CEBC59E007C73F1 /* DetailViewController.swift */,
-				7AB38F951CEBC59E007C73F1 /* Main.storyboard */,
-				7AB38F981CEBC59E007C73F1 /* Assets.xcassets */,
-				7AB38F9A1CEBC59E007C73F1 /* LaunchScreen.storyboard */,
-				7AB38F9D1CEBC59E007C73F1 /* Info.plist */,
-				7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */,
-				7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */,
-				7A019E5E1D09E95500852D21 /* FA_leftMenuImplementation.swift */,
-				7A019E601D0A0E6F00852D21 /* Master2ViewController.swift */,
 			);
 			path = FA_UISplitViewController;
 			sourceTree = "<group>";
@@ -142,11 +167,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7AB1AC881D0B7422001FFB31 /* Main.storyboard in Resources */,
 				7A11CBF51CF37695000E0D9A /* Info.plist in Resources */,
-				7AB38F9C1CEBC59E007C73F1 /* LaunchScreen.storyboard in Resources */,
+				7A019E651D0B5DB200852D21 /* FA_UISplitViewController.podspec in Resources */,
+				7A019E661D0B5DB200852D21 /* LICENSE in Resources */,
+				7AB1AC871D0B7422001FFB31 /* LaunchScreen.storyboard in Resources */,
 				7AB38FC81CEFBE70007C73F1 /* IMG_2121.JPG in Resources */,
 				7AB38F991CEBC59E007C73F1 /* Assets.xcassets in Resources */,
-				7AB38F971CEBC59E007C73F1 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -157,12 +184,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7A019E5F1D09E95500852D21 /* FA_leftMenuImplementation.swift in Sources */,
+				7AB1AC8A1D0B750E001FFB31 /* FA_leftMenuImplementation.swift in Sources */,
 				7AB38F941CEBC59E007C73F1 /* DetailViewController.swift in Sources */,
 				7AB38F921CEBC59E007C73F1 /* MasterViewController.swift in Sources */,
 				7AB38FA41CEBE173007C73F1 /* MillefeuilleviewController.swift in Sources */,
 				7AB38FA61CEBE279007C73F1 /* FA_MenuViewController.swift in Sources */,
 				7A019E611D0A0E6F00852D21 /* Master2ViewController.swift in Sources */,
+				7A019E671D0B5DB200852D21 /* README.md in Sources */,
 				7AB38F901CEBC59E007C73F1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -170,20 +198,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		7AB38F951CEBC59E007C73F1 /* Main.storyboard */ = {
+		7AB1AC831D0B7422001FFB31 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				7AB38F961CEBC59E007C73F1 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		7AB38F9A1CEBC59E007C73F1 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				7AB38F9B1CEBC59E007C73F1 /* Base */,
+				7AB1AC841D0B7422001FFB31 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		7AB1AC851D0B7422001FFB31 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7AB1AC861D0B7422001FFB31 /* Base */,
+			);
+			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -280,7 +308,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				INFOPLIST_FILE = FA_UISplitViewController/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
@@ -295,7 +323,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				INFOPLIST_FILE = FA_UISplitViewController/Info.plist;
+				INFOPLIST_FILE = Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;

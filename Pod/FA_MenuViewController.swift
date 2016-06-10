@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class FA_LeftMenuViewController: UIViewController{
+class FA_MenuViewController: UIViewController{
   
   weak var millefeuille: MillefeuilleViewController?
 

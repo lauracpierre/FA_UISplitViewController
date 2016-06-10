@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class FA_LeftMenuImplementation: FA_LeftMenuViewController, MillefeuilleLeftControllerSelectionProtocol {
+class FA_LeftMenuImplementation: FA_MenuViewController, MillefeuilleLeftControllerSelectionProtocol {
   
   var tableView: UITableView!
   
