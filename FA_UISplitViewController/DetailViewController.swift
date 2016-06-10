@@ -28,6 +28,10 @@ class DetailViewController: UIViewController {
         }
     }
   }
+  
+  deinit {
+    NSLog("deinit DetailViewcontroller")
+  }
 
   @IBAction func showNext(sender: AnyObject) {
     self.performSegueWithIdentifier("show", sender: nil)

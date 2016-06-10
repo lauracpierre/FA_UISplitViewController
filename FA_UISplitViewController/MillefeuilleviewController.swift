@@ -9,391 +9,294 @@
 import Foundation
 import UIKit
 
-struct ScreenSize
-{
-  static let SCREEN_WIDTH = UIScreen.mainScreen().bounds.size.width
-  static let SCREEN_HEIGHT = UIScreen.mainScreen().bounds.size.height
-  static let SCREEN_MAX_LENGTH = max(ScreenSize.SCREEN_WIDTH, ScreenSize.SCREEN_HEIGHT)
-  static let SCREEN_MIN_LENGTH = min(ScreenSize.SCREEN_WIDTH, ScreenSize.SCREEN_HEIGHT)
-}
-
-struct DeviceType
-{
-  static let IS_IPHONE_4_OR_LESS =  UIDevice.currentDevice().userInterfaceIdiom == .Phone && ScreenSize.SCREEN_MAX_LENGTH < 568.0
-  static let IS_IPHONE_5 = UIDevice.currentDevice().userInterfaceIdiom == .Phone && ScreenSize.SCREEN_MAX_LENGTH == 568.0
-  static let IS_IPHONE_6 = UIDevice.currentDevice().userInterfaceIdiom == .Phone && ScreenSize.SCREEN_MAX_LENGTH == 667.0
-  static let IS_IPHONE_6P = UIDevice.currentDevice().userInterfaceIdiom == .Phone && ScreenSize.SCREEN_MAX_LENGTH == 736.0
-}
-
 class MillefeuilleViewController: UIViewController {
   
+  /// Segue name to create the left menu that will overlay the application
   private var loadMenuSegueIdentifier = "loadMenu"
+  
+  /// Segue name to create the master view for the UISplitViewController
   private var loadMasterSegueIdentifier = "loadMaster"
   
-  var mainViewController: UIViewController!
+  /// variable to indicate whether or not we should check if the iPad start in Portrait mode to force the Overlay menu to appear
+  private var modeCheckedAtLaunch = false
+  
+  /// A reference to the left menu view controller
   private var leftViewController: UIViewController?
-  var leftMenuWidth: CGFloat = 266.0
-  private var menuExpanded = false
+  
+  /// The view that we display in overlay of the application while we display the left menu
   private var viewOverlay = UIView()
+  
+  /// Size of the overlay menu
+  var leftMenuWidth: CGFloat = 266.0
+  
+  /// Time duration for the show/hide menu animation
+  var animationTimeDuration: NSTimeInterval = 0.3
+  
+  /// the main view displayed at all time in the device. For now, only supporting UISplitViewController
+  var mainViewController: UISplitViewController!
+  
+  /// the delegate to interact with the left menu in selectionWasMade
+  var leftMenuDelegate: MillefeuilleLeftControllerSelectionProtocol?
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    // Performing the two segues right now creates the view controllers needed for the application. 
+    // It uses custom Segues in order to get a reference to the view controller
     self.performSegueWithIdentifier(loadMasterSegueIdentifier, sender: nil)
     self.performSegueWithIdentifier(loadMenuSegueIdentifier, sender: nil)
     
-    let center = NSNotificationCenter.defaultCenter()
-    center.addObserver(self, selector: #selector(MillefeuilleViewController.showHiddenMenus), name: "SHOW_MENU", object: nil)
-    center.addObserver(self, selector: #selector(MillefeuilleViewController.hideMenu), name: "HIDE_MENU", object: nil)
-    //center.addObserver(self, selector: #selector(MillefeuilleViewController.rotationDidChange(_:)), name: UIDeviceOrientationDidChangeNotification, object: nil)
-    center.addObserver(self, selector: #selector(MillefeuilleViewController.showMaster), name: "SHOW_MASTER", object: nil)
+    // Checks whether or not we should change the preferred Display mode to be .OverlayVisible or not
+    self.changePreferredDisplayMode(self.isPortrait())
     
+    // Registering to a show/hide events in order to display the left menu
+    let center = NSNotificationCenter.defaultCenter()
+    center.addObserver(self, selector: #selector(MillefeuilleViewController.showMenus), name: "SHOW_MENU", object: nil)
+    center.addObserver(self, selector: #selector(MillefeuilleViewController.hideMenus), name: "HIDE_MENU", object: nil)
+    
+    // Preparing the overlay view
+    let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.overlayViewWasSwiped))
+    swipeRecognizer.direction = .Left
     self.viewOverlay.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0)
     self.viewOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.overlayViewWasTapped)))
+    self.viewOverlay.addGestureRecognizer(swipeRecognizer)
+    
+    // Adding the left button on the detail view controller so that we can display the view controller if nothing is selected
+    let navigationController = self.mainViewController.viewControllers[self.mainViewController.viewControllers.count-1] as! UINavigationController
+    navigationController.topViewController!.navigationItem.leftBarButtonItem = self.mainViewController.displayModeButtonItem()
   }
   
+  /**
+   * Method called when the overlay receives a tap gesture
+   * The goal is to hide the menu and the overlay
+   */
   func overlayViewWasTapped() {
-    self.hideMenu()
+    self.hideMenus()
   }
   
-  func showMaster() {
-    let split = self.mainViewController as! UISplitViewController
-    split.showViewController(split.viewControllers[0], sender: nil)
-    //self.performSegueWithIdentifier("test", sender: self)
+  /**
+   * Method called when the overlay receives a swipe gesture
+   * The goal is to hide the menu and the overlay
+   */
+  func overlayViewWasSwiped() {
+    self.hideMenus()
   }
   
+  /**
+   * This method checks if the iPad is in Portrait mode and if this is the first time we are displaying the view
+   * If this is the case we force the preferredDisplayMode to be PrimaryOverlay.
+   * Otherwise we let the UISplitViewController decide what it should be.
+   */
+  private func changePreferredDisplayMode(portrait: Bool) {
+    if portrait && self.isIpad() && !self.modeCheckedAtLaunch {
+      return self.mainViewController.preferredDisplayMode = .PrimaryOverlay
+    }
+    self.modeCheckedAtLaunch = true
+    
+    return self.mainViewController.preferredDisplayMode = .Automatic
+  }
+  
+  /**
+   * Method to call in order to hide the menu with the overlay menu.
+   * This method will add the menuview and the overlay to the KeyWindow in order to always be over the master view
+   */
+  func hideMenus() {
+    UIView.animateWithDuration(self.animationTimeDuration, animations: {
+      self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.0)
+      self.leftViewController?.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, self.leftViewController!.view.frame.height)
+    }) { (_) in
+      self.removeMenusFromSuperview()
+    }
+  }
+
+  /**
+   * Check if the device is in Landscape mode
+   */
   func isLandscape() -> Bool {
-    let orientation = UIDevice.currentDevice().orientation
-    return orientation == .LandscapeRight || orientation == .LandscapeLeft
+    return !self.isPortrait()
   }
   
-  func isRetina() -> Bool {
-    return UIScreen.mainScreen().scale == 2
+  /**
+   * Check if the device is in Portrait mode
+   */
+  func isPortrait() -> Bool {
+    let orientation = UIApplication.sharedApplication().statusBarOrientation
+    return (orientation == .Portrait || orientation == .PortraitUpsideDown)
   }
   
+  /**
+   * Check if the device is in Landscape mode
+   */
+  override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+    self.hideMenusImmediately()
+    self.changePreferredDisplayMode(!self.isPortrait())
+  }
   
-//  func showMenu() {
-//    if menuExpanded {
-//      return
-//    }
-//    
-//    if let leftVC = self.leftViewController {
-//
-//      leftVC.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, leftVC.view.frame.height)
-//      UIApplication.sharedApplication().keyWindow?.addSubview(leftVC.view)
-//      UIView.animateWithDuration(0.5, animations: {
-//        if let key = UIApplication.sharedApplication().keyWindow {
-//          key.subviews.forEach({ (view) in
-//            if view != self.leftViewController?.view {
-//              view.frame = CGRectMake(self.leftMenuWidth, 0, view.frame.width, view.frame.height)
-//            } else {
-//              view.frame = CGRectMake(0, 0, self.leftMenuWidth, key.frame.height)
-//              NSLog("\(view)")
-//            }
-//          })
-//
-//        }
-//        self.menuExpanded = true
-//      })
-//    }
-//  }
-  
-  func showHiddenMenus() {
-//    if let leftVC = self.leftViewController {
-//      leftVC.modalPresentationStyle = .Custom
-//      leftVC.transitioningDelegate = self
-//      leftVC.popoverPresentationController?.sourceView = self.view
-//      self.presentViewController(leftVC, animated: true, completion: nil)
-//    }
-    let mainController = self.getMasterController()
-    let mainView = mainController.view
-    let detailController = self.getDetailController()
+  /**
+   * Method to call in order to show the menu with the overlay menu.
+   * This method will add the menuview and the overlay to the KeyWindow in order to always be over the master view
+   */
+  func showMenus() {
     if let leftMenuView = self.leftViewController?.view {
       self.addLeftMenuToKeyWindow()
-      self.addOverlay()
-      UIView.animateWithDuration(0.5, animations: {
+      UIView.animateWithDuration(self.animationTimeDuration, animations: {
         self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.5)
         leftMenuView.frame = CGRectMake(0, 0, self.leftMenuWidth, leftMenuView.frame.height)
-        
-        if self.shouldMoveMasterToDisplayMenu() {
-          mainView.frame = CGRectMake(self.leftMenuWidth, 0, mainView.frame.width, mainView.frame.height)
-        }
-        
-        if let detailView = detailController?.view {
-          if self.isLandscape() {
-            detailView.frame = CGRectMake((self.leftMenuWidth/2 + mainView.frame.width), 0, detailView.frame.width, detailView.frame.height)
-          } else {
-            detailView.frame = CGRectMake(self.leftMenuWidth/2, 0, detailView.frame.width, detailView.frame.height)
-          }
-        }
       })
       
     }
   }
   
-  func menuIsShowing() -> Bool {
-    return self.viewOverlay.superview != nil
+  func selectionWasMade() {
+    guard let delegate = self.leftMenuDelegate else {
+      return
+    }
+    
+    // let's perform the segue if needed and return
+    if delegate.shouldPerformSegue() {
+      return delegate.performSegue()
+    }
+    
+    self.passObjectToMasterViewController()
   }
   
-  func addOverlay() {
+  func passObjectToMasterViewController() {
+    guard let delegate = self.leftMenuDelegate else {
+      return
+    }
     
-    let idiom = UIDevice.currentDevice().userInterfaceIdiom
-    let split = self.getSplitViewController()
-    let o = UIScreen.mainScreen().bounds
-    let newFrame = CGRectMake(0, 0, o.width, o.height)
-    self.viewOverlay.frame = newFrame
+    if let object = delegate.shouldPassObject(), let master = self.getMillefeuilleMasterMinimalImplementationObject() {
+      master.selectionChangedInMenu(object)
+    }
+  }
+  
+  private func getMillefeuilleMasterMinimalImplementationObject() -> MillefeuilleMasterViewMinimalImplementation? {
+    // if the master is a navigation controller, let's get the first viewcontroller
+    if let nav = self.mainViewController.viewControllers.first as? UINavigationController, let master = nav.viewControllers.first as? MillefeuilleMasterViewMinimalImplementation {
+      return master
+    }
     
-    if idiom == UIUserInterfaceIdiom.Pad {
+    // may be the master is a simple view controller
+    if let master = self.mainViewController.viewControllers.first as? MillefeuilleMasterViewMinimalImplementation {
+      return master
+    }
     
-      if split.viewControllers.count < 2 {
-        return
-      }
-      
-      guard let nav = split.viewControllers[1] as? UINavigationController else {
-        return
-      }
-      
-      nav.view.addSubview(self.viewOverlay)
+    return nil
+  }
+  
+  /**
+   * Method to call in order to hide the menus without animation.
+   */
+  private func hideMenusImmediately() {
+    self.removeMenusFromSuperview()
+  }
 
-    } else if idiom == .Phone {
-      let mainController = self.getMasterController()
-      mainController.view.addSubview(self.viewOverlay)
-    }
-    
+  /**
+   * Removes the menu from the superview in order: 
+   * - Avoid constraint breaking during rotation
+   * - Be less heavy on the UI resources
+   */
+  private func removeMenusFromSuperview() {
+    self.viewOverlay.removeFromSuperview()
+    self.leftViewController?.view.removeFromSuperview()
   }
   
-  func shouldMoveMasterToDisplayMenu() -> Bool {
-
-    if self.isIphone() {
-      return false
-    }
-    if self.isIpad() {
-      return true
-    }
-    return false
-  }
-  
-  func isIpad() -> Bool {
+  /**
+   * Check if the device is an iPad
+   */
+  private func isIpad() -> Bool {
     return UIDevice.currentDevice().userInterfaceIdiom == .Pad
   }
   
-  func isIphone() -> Bool {
-    return UIDevice.currentDevice().userInterfaceIdiom == .Phone
-  }
-  
-  func addLeftMenuToKeyWindow() {
+  /**
+   * Method responsible for:
+   * - Add Overlay to key window (this way we are always above the master view, even when using PrimaryOverlay Visible)
+   * - Add Leftviewcontroller's view to key window, above the overlay
+   * - Ensure the left controller's view has the right size and position
+   */
+  private func addLeftMenuToKeyWindow() {
     guard let leftVC = self.leftViewController else {
       return
     }
     
-    leftVC.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, leftVC.view.frame.height)
-    UIApplication.sharedApplication().keyWindow?.addSubview(leftVC.view)
-  }
-  
-//  func getMasterView() -> UIView {
-//    let split = self.mainViewController as! UISplitViewController
-//    return split.viewControllers[0].view
-//  }
-  
-  func hideMenu() {
-    let mainController = self.getMasterController()
-    let detailController = self.getDetailController()
-    
-    let mainView = mainController.view
-    let detailView = detailController?.view
-    let f = mainView.frame
-    let df = detailView?.frame
-    
-    UIView.animateWithDuration(0.5, animations: {
-      self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.0)
-      self.leftViewController?.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftViewController!.view.frame.width, self.leftViewController!.view.frame.height)
-      if self.isIpad() {
-        if self.isLandscape() {
-          let gap: CGFloat = self.isRetina() ? 0.5 : 1.0
-          mainView.frame = CGRectMake(0, 0, f.width, f.height)
-          if let df = df {
-            detailView?.frame = CGRectMake(f.width + gap, 0, df.width, df.height)
-          }
-        } else {
-          mainView.frame = CGRectMake(-f.width, 0, f.width, f.height)
-          if let df = df {
-            detailView?.frame = CGRectMake(0, 0, df.width, df.height)
-          }
-        }
-      }
-    }) { (_) in
-      self.viewOverlay.removeFromSuperview()
-      self.leftViewController?.view.removeFromSuperview()
-    }
-  }
-  
-//  func rotationDidChange(orientation: UIDeviceOrientation) {
-//    NSLog("rotation finished: \(orientation)")
-//    //self.hideMenu()
-//  }
-  
-  func getSplitViewController() -> UISplitViewController {
-    return self.mainViewController as! UISplitViewController
-  }
-  
-  func getMasterController() -> UIViewController {
-    return self.getSplitViewController().viewControllers[0]
-  }
-  
-  func getDetailController() -> UIViewController? {
-    let splitViewController = self.getSplitViewController()
-    if splitViewController.viewControllers.count < 2 {
-      return nil
+    guard let keyWindow = UIApplication.sharedApplication().keyWindow else {
+      return
     }
     
-    return splitViewController.viewControllers[1]
+    let o = UIScreen.mainScreen().bounds
+    let newFrame = CGRectMake(0, 0, o.width, o.height)
+    self.viewOverlay.frame = newFrame
+    keyWindow.addSubview(self.viewOverlay)
+    
+    leftVC.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, o.height)
+    keyWindow.addSubview(leftVC.view)
   }
 }
 
-//extension MillefeuilleViewController: UIViewControllerTransitioningDelegate {
-//  func animationControllerForPresentedController(presented: UIViewController, presentingController presenting: UIViewController, sourceController source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//    NSLog("should display controller")
-//    return FA_TransitionPresentationAnimator()
-//  }
-//  
-//  func animationControllerForDismissedController(dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-//    return FA_TransitionDismissalAnimator()
-//  }
-//}
-//
-//class FA_TransitionPresentationAnimator: NSObject, UIViewControllerAnimatedTransitioning {
-//  var view: UIView? = nil
-//  func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
-//    return 0.5
-//  }
-//  
-//  func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-//    NSLog("should animate presentation")
-//    let fromViewController = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)!
-//    let toViewController = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)!
-//    let containerView = transitionContext.containerView()
-//    
-//    
-//    let animationDuration = self .transitionDuration(transitionContext)
-//    
-//    if let left = toViewController as? FA_MenuViewController,
-//       let millefeuille = fromViewController as? MillefeuilleViewController,
-//       let split = millefeuille.mainViewController as? UISplitViewController {
-//      
-//      let masterView = split.viewControllers[0].view
-//      let o = left.view.frame
-//      
-//      
-//      left.view.frame = CGRectMake(-millefeuille.leftMenuWidth, 0, millefeuille.leftMenuWidth, o.height)
-//      containerView?.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0)
-//      containerView?.addSubview(toViewController.view)
-//      containerView?.userInteractionEnabled = false
-//      
-//      //masterView.frame = CGRectMake(millefeuille.leftMenuWidth, 0, masterView.frame.width, masterView.frame.height)
-//      //containerView?.addSubview(masterView)
-//      
-//      UIView.animateWithDuration(animationDuration, animations: { 
-//        left.view.frame = CGRectMake(0,0, millefeuille.leftMenuWidth, o.height)
-//        masterView.frame = CGRectMake(millefeuille.leftMenuWidth, 0, masterView.frame.width, masterView.frame.height)
-//        //containerView?.backgroundColor = containerView?.backgroundColor?.colorWithAlphaComponent(0.5)
-//      }, completion: { (animated) in
-//        
-//        NSLog("masterView frame: \(masterView.frame)")
-//        NSLog("parentView is container?: \(masterView.superview == containerView)")
-//        
-//       
-//      })
-//    }
-//  }
-//}
-//
-//class FA_TransitionDismissalAnimator: NSObject, UIViewControllerAnimatedTransitioning {
-//  func transitionDuration(transitionContext: UIViewControllerContextTransitioning?) -> NSTimeInterval {
-//    return 0.5
-//  }
-//  
-//  func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
-//    NSLog("should animate dismissal")
-//  }
-//}
+// MARK: - Delegate method for UISplitView
 extension MillefeuilleViewController: UISplitViewControllerDelegate {
   
-  
-  // I think called when we call showViewController
-  func splitViewController(splitViewController: UISplitViewController, showViewController vc: UIViewController, sender: AnyObject?) -> Bool {
-    NSLog("do you want to display master?")
-    switch(splitViewController.displayMode) {
-    case .AllVisible: self.showHiddenMenus();break
-    case .PrimaryHidden:
-      self.showHiddenMenus()
-      break
-    default: break
-    }
-
-    //self.performSegueWithIdentifier("DISPLAY_MENU", sender: nil)
-    return true
-  }
-  
   func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController:UIViewController, ontoPrimaryViewController primaryViewController:UIViewController) -> Bool {
-    guard let secondaryAsNavController = secondaryViewController as? UINavigationController else { return false }
-    guard let topAsDetailController = secondaryAsNavController.topViewController as? DetailViewController else { return false }
-    if topAsDetailController.detailItem == nil {
-      // Return true to indicate that we have handled the collapse by doing nothing; the secondary controller will be discarded.
-      return true
-    }
-    return false
-  }
-  
-  func splitViewController(svc: UISplitViewController, willChangeToDisplayMode displayMode: UISplitViewControllerDisplayMode) {
-    
-    switch (displayMode){
-      case .AllVisible: NSLog("displaymode is changing: all visible"); break
-      case .PrimaryHidden: NSLog("displaymode is changing: primary hidden"); break
-      case .PrimaryOverlay: NSLog("displaymode is changing: primary overlay"); break
-      case .Automatic: NSLog("displaymode is changing: auto"); break
-    }
-    if let view = self.leftViewController?.view {
-      UIApplication.sharedApplication().keyWindow?.addSubview(view)
-      UIView.animateWithDuration(0.2, animations: {
-      
-          if displayMode == .PrimaryOverlay {
-            self.showHiddenMenus()
-          } else if displayMode == .PrimaryHidden {
-            self.hideMenu()
-          } else if displayMode == .AllVisible {
-            self.hideMenu()
-        }
-      })
-    }
-
-  }
-  
-  func splitViewController(splitViewController: UISplitViewController, showDetailViewController vc: UIViewController, sender: AnyObject?) -> Bool {
-    NSLog("do you want to disoplauy the secondary?")
-    
-    if !self.menuIsShowing() {
+    guard let master = self.getMillefeuilleMasterMinimalImplementationObject() else {
       return false
     }
     
-    guard let detailViewController = self.getDetailController() else {
-      return false
-    }
-    
-    let currentView = detailViewController.view
-    let splitViewController = self.getSplitViewController()
-    vc.view.frame = CGRectMake(currentView.frame.origin.x, currentView.frame.origin.y, currentView.frame.width, currentView.frame.height)
-    vc.view.addSubview(self.viewOverlay)
-    splitViewController.viewControllers[1] = vc
-    
-    return true
+    return !master.detailIsDisplayingItem()
   }
   
 }
 
-class FA_SetMasterMenuSegue: UIStoryboardSegue {
+// MARK: - Communication protocols
+protocol MillefeuilleLeftControllerSelectionProtocol {
+  
+  /**
+   * Delegate method asking if the left controller wants to pass an object to the splitViewcontroller's master controller
+   * This method is called when the left controller called `selectionWasMade`:
+   *  - Either immediately if there is no need to change the master's controller type
+   *  - After executing the cell's segue, to give data to the newly created controller
+   */
+  func shouldPassObject() -> AnyObject?
+  
+  /**
+   * Delegate method asking the left controller if the current master controller is the right one or not, and 
+   * the MillefeuilleViewController should execute the segue to replace the masterViewController
+   */
+  func shouldPerformSegue() -> Bool
+  
+  /**
+   * Method called to trigger segue in order to create the new view controller
+   */
+  func performSegue()
+  
+}
+
+
+protocol MillefeuilleMasterViewMinimalImplementation {
+  
+  /**
+   * Protocol to implement in order to be notified when the left menu changed the selection
+   */
+  func selectionChangedInMenu(object: AnyObject?)
+  
+  /** 
+   * Asking the master view if it is already displaying the detail view
+   */
+  func detailIsDisplayingItem() -> Bool
+}
+
+
+
+// MARK: - Custom Segues
+
+/**
+ * Use this segue with a UISplitViewController in order to set the set and retain a reference to the UISplitViewController
+ * If the source view controller is not of type MillefeuilleViewController then the segue will not do anything
+ * If the destinaton view controller is not of type UISplitViewController then the segue will not do anything
+ */
+class FA_SetSplitViewSegue: UIStoryboardSegue {
   override func perform() {
-    if let source = self.sourceViewController as? MillefeuilleViewController {
-      source.mainViewController = self.destinationViewController
+    if let source = self.sourceViewController as? MillefeuilleViewController, main = self.destinationViewController as? UISplitViewController {
+      source.mainViewController = main
       source.addChildViewController(self.destinationViewController)
       source.view.addSubview(self.destinationViewController.view)
       
@@ -404,14 +307,65 @@ class FA_SetMasterMenuSegue: UIStoryboardSegue {
   }
 }
 
+/**
+ * Use this segue with a UISplitViewController in order to set the set and retain a reference to the UISplitViewController
+ * If the source view controller is not of type MillefeuilleViewController then the segue will not do anything
+ * If the destinaton view controller is not of type UISplitViewController then the segue will not do anything
+ */
+class FA_SetSplitViewFromMenuSegue: UIStoryboardSegue {
+  override func perform() {
+    if let menu = self.sourceViewController as? FA_LeftMenuViewController, let source = menu.millefeuille,  main = self.destinationViewController as? UISplitViewController {
+      source.mainViewController = main
+      
+      // removing reference to previous child views and controller, otherwise we will never deinit the splitview controllers and memory will go off the charts
+      if let previousSplit = source.childViewControllers.first as? UISplitViewController {
+        previousSplit.preferredDisplayMode = .PrimaryHidden
+        previousSplit.view.removeFromSuperview()
+        previousSplit.removeFromParentViewController()
+      }
+      
+      if let splitViewController = self.destinationViewController as? UISplitViewController {
+        splitViewController.delegate = source
+      }
+      
+      // Presenting the views and keeping reference to the controller
+      source.addChildViewController(self.destinationViewController)
+      source.view.addSubview(self.destinationViewController.view)
+
+    }
+  }
+}
+
+/**
+ * Use this segue to get a reference to the left view you want to display as an overlay
+ * If the source view controller is not of type MillefeuilleViewController then the segue will not do anything
+ * If the destination view controller is not of type FA_LeftMenuViewController then the segue will not do anything
+ */
 class FA_SetMenuSegue: UIStoryboardSegue {
   override func perform() {
     if let source = self.sourceViewController as? MillefeuilleViewController {
-      let o = self.destinationViewController.view.frame
-      let frame = CGRectMake(-source.leftMenuWidth, o.origin.y, source.leftMenuWidth, o.height)
-      self.destinationViewController.view.frame = frame
-      source.leftViewController = self.destinationViewController
-      //UIApplication.sharedApplication().keyWindow?.addSubview(self.destinationViewController.view)
+      
+      self.setupMenuSegue(source, destination: self.destinationViewController)
+    }
+  }
+  
+  private func setupMenuSegue(source: MillefeuilleViewController, destination: UIViewController) {
+    source.leftViewController = destination
+    
+    if let destination = destination as? FA_LeftMenuViewController {
+      destination.millefeuille = source
+      self.checkDestinationDelegate(source, destination: destination)
+    }
+    
+    if let nav = self.destinationViewController as? UINavigationController, let destination = nav.viewControllers.first as? FA_LeftMenuViewController {
+      destination.millefeuille = source
+      self.checkDestinationDelegate(source, destination: destination)
+    }
+  }
+  
+  private func checkDestinationDelegate(source: MillefeuilleViewController, destination: FA_LeftMenuViewController) {
+    if let delegate = destination as? MillefeuilleLeftControllerSelectionProtocol {
+      source.leftMenuDelegate = delegate
     }
   }
 }

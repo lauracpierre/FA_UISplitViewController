@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7A019E5F1D09E95500852D21 /* FA_leftMenuImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A019E5E1D09E95500852D21 /* FA_leftMenuImplementation.swift */; };
+		7A019E611D0A0E6F00852D21 /* Master2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A019E601D0A0E6F00852D21 /* Master2ViewController.swift */; };
 		7A11CBF51CF37695000E0D9A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F9D1CEBC59E007C73F1 /* Info.plist */; };
 		7AB38F901CEBC59E007C73F1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38F8F1CEBC59E007C73F1 /* AppDelegate.swift */; };
 		7AB38F921CEBC59E007C73F1 /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38F911CEBC59E007C73F1 /* MasterViewController.swift */; };
@@ -20,6 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7A019E5E1D09E95500852D21 /* FA_leftMenuImplementation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FA_leftMenuImplementation.swift; sourceTree = "<group>"; };
+		7A019E601D0A0E6F00852D21 /* Master2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Master2ViewController.swift; sourceTree = "<group>"; };
 		7AB38F8C1CEBC59E007C73F1 /* FA_UISplitViewController.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FA_UISplitViewController.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AB38F8F1CEBC59E007C73F1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AB38F911CEBC59E007C73F1 /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
@@ -73,6 +77,8 @@
 				7AB38F9D1CEBC59E007C73F1 /* Info.plist */,
 				7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */,
 				7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */,
+				7A019E5E1D09E95500852D21 /* FA_leftMenuImplementation.swift */,
+				7A019E601D0A0E6F00852D21 /* Master2ViewController.swift */,
 			);
 			path = FA_UISplitViewController;
 			sourceTree = "<group>";
@@ -151,10 +157,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7A019E5F1D09E95500852D21 /* FA_leftMenuImplementation.swift in Sources */,
 				7AB38F941CEBC59E007C73F1 /* DetailViewController.swift in Sources */,
 				7AB38F921CEBC59E007C73F1 /* MasterViewController.swift in Sources */,
 				7AB38FA41CEBE173007C73F1 /* MillefeuilleviewController.swift in Sources */,
 				7AB38FA61CEBE279007C73F1 /* FA_MenuViewController.swift in Sources */,
+				7A019E611D0A0E6F00852D21 /* Master2ViewController.swift in Sources */,
 				7AB38F901CEBC59E007C73F1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -273,6 +281,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = FA_UISplitViewController/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
 				PRODUCT_NAME = FA_UISplitViewController;
@@ -287,6 +296,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = FA_UISplitViewController/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
 				PRODUCT_NAME = FA_UISplitViewController;

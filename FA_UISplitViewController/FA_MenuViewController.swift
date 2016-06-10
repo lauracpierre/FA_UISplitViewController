@@ -9,11 +9,9 @@
 import Foundation
 import UIKit
 
-class FA_MenuViewController: UIViewController {
+class FA_LeftMenuViewController: UIViewController{
   
-  
-  @IBAction func hideMenu(sender: AnyObject) {
-    NSNotificationCenter.defaultCenter().postNotificationName("HIDE_MENU", object: nil)
-  }
-  
+  weak var millefeuille: MillefeuilleViewController?
+
+
 }

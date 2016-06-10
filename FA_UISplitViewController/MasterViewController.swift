@@ -12,6 +12,7 @@ class MasterViewController: UITableViewController {
 
   var detailViewController: DetailViewController? = nil
   var objects = [AnyObject]()
+  var showingSecondary = false
 
 
   override func viewDidLoad() {
@@ -31,11 +32,16 @@ class MasterViewController: UITableViewController {
   override func viewWillAppear(animated: Bool) {
     self.clearsSelectionOnViewWillAppear = self.splitViewController!.collapsed
     super.viewWillAppear(animated)
+    self.showingSecondary = false
   }
 
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
+  }
+  
+  deinit {
+    NSLog("deinit MasterViewcontroller")
   }
 
   func insertNewObject(sender: AnyObject) {
@@ -49,22 +55,18 @@ class MasterViewController: UITableViewController {
   }
 
   // MARK: - Segues
-
   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
     if segue.identifier == "showDetail" {
+      self.showingSecondary = true
         if let indexPath = self.tableView.indexPathForSelectedRow {
             let object = objects[indexPath.row] as! NSDate
             let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
             controller.detailItem = object
-        //controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
-         controller.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Master", style: .Plain, target: self, action: #selector(MasterViewController.master))
+        controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+
             controller.navigationItem.leftItemsSupplementBackButton = true
         }
     }
-  }
-  
-  func master() {
-    NSNotificationCenter.defaultCenter().postNotificationName("SHOW_MASTER", object: nil)
   }
 
   // MARK: - Table View
@@ -100,5 +102,15 @@ class MasterViewController: UITableViewController {
   }
 
 
+}
+
+extension MasterViewController: MillefeuilleMasterViewMinimalImplementation {
+  func selectionChangedInMenu(object: AnyObject?) {
+    NSLog("changed: \(object)")
+  }
+  
+  func detailIsDisplayingItem() -> Bool {
+   return self.showingSecondary
+  }
 }
 
