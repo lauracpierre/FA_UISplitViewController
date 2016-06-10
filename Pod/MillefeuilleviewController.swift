@@ -314,7 +314,7 @@ class FA_SetSplitViewSegue: UIStoryboardSegue {
  */
 class FA_SetSplitViewFromMenuSegue: UIStoryboardSegue {
   override func perform() {
-    if let menu = self.sourceViewController as? FA_MenuViewController, let source = menu.millefeuille,  main = self.destinationViewController as? UISplitViewController {
+    if let menu = self.sourceViewController as? MillefeuilleMenuViewController, let source = menu.millefeuille,  main = self.destinationViewController as? UISplitViewController {
       source.mainViewController = main
       
       // removing reference to previous child views and controller, otherwise we will never deinit the splitview controllers and memory will go off the charts
@@ -352,18 +352,18 @@ class FA_SetMenuSegue: UIStoryboardSegue {
   private func setupMenuSegue(source: MillefeuilleViewController, destination: UIViewController) {
     source.leftViewController = destination
     
-    if let destination = destination as? FA_MenuViewController {
+    if let destination = destination as? MillefeuilleMenuViewController {
       destination.millefeuille = source
       self.checkDestinationDelegate(source, destination: destination)
     }
     
-    if let nav = self.destinationViewController as? UINavigationController, let destination = nav.viewControllers.first as? FA_MenuViewController {
+    if let nav = self.destinationViewController as? UINavigationController, let destination = nav.viewControllers.first as? MillefeuilleMenuViewController {
       destination.millefeuille = source
       self.checkDestinationDelegate(source, destination: destination)
     }
   }
   
-  private func checkDestinationDelegate(source: MillefeuilleViewController, destination: FA_MenuViewController) {
+  private func checkDestinationDelegate(source: MillefeuilleViewController, destination: MillefeuilleMenuViewController) {
     if let delegate = destination as? MillefeuilleLeftControllerSelectionProtocol {
       source.leftMenuDelegate = delegate
     }

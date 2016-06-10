@@ -20,7 +20,7 @@
 		7AB38F941CEBC59E007C73F1 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38F931CEBC59E007C73F1 /* DetailViewController.swift */; };
 		7AB38F991CEBC59E007C73F1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F981CEBC59E007C73F1 /* Assets.xcassets */; };
 		7AB38FA41CEBE173007C73F1 /* MillefeuilleviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */; };
-		7AB38FA61CEBE279007C73F1 /* FA_MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */; };
+		7AB38FA61CEBE279007C73F1 /* MillefeuilleMenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB38FA51CEBE279007C73F1 /* MillefeuilleMenuViewController.swift */; };
 		7AB38FC81CEFBE70007C73F1 /* IMG_2121.JPG in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38FC71CEFBE70007C73F1 /* IMG_2121.JPG */; };
 /* End PBXBuildFile section */
 
@@ -39,7 +39,7 @@
 		7AB38F981CEBC59E007C73F1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7AB38F9D1CEBC59E007C73F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MillefeuilleviewController.swift; path = ../Pod/MillefeuilleviewController.swift; sourceTree = "<group>"; };
-		7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FA_MenuViewController.swift; path = ../Pod/FA_MenuViewController.swift; sourceTree = "<group>"; };
+		7AB38FA51CEBE279007C73F1 /* MillefeuilleMenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MillefeuilleMenuViewController.swift; path = ../Pod/MillefeuilleMenuViewController.swift; sourceTree = "<group>"; };
 		7AB38FC71CEFBE70007C73F1 /* IMG_2121.JPG */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = IMG_2121.JPG; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -57,7 +57,7 @@
 		7A019E681D0B5F2000852D21 /* Pod */ = {
 			isa = PBXGroup;
 			children = (
-				7AB38FA51CEBE279007C73F1 /* FA_MenuViewController.swift */,
+				7AB38FA51CEBE279007C73F1 /* MillefeuilleMenuViewController.swift */,
 				7AB38FA31CEBE173007C73F1 /* MillefeuilleviewController.swift */,
 			);
 			name = Pod;
@@ -188,7 +188,7 @@
 				7AB38F941CEBC59E007C73F1 /* DetailViewController.swift in Sources */,
 				7AB38F921CEBC59E007C73F1 /* MasterViewController.swift in Sources */,
 				7AB38FA41CEBE173007C73F1 /* MillefeuilleviewController.swift in Sources */,
-				7AB38FA61CEBE279007C73F1 /* FA_MenuViewController.swift in Sources */,
+				7AB38FA61CEBE279007C73F1 /* MillefeuilleMenuViewController.swift in Sources */,
 				7A019E611D0A0E6F00852D21 /* Master2ViewController.swift in Sources */,
 				7A019E671D0B5DB200852D21 /* README.md in Sources */,
 				7AB38F901CEBC59E007C73F1 /* AppDelegate.swift in Sources */,
