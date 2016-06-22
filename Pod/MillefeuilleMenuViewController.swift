@@ -9,9 +9,9 @@
 import Foundation
 import UIKit
 
-class MillefeuilleMenuViewController: UIViewController{
+public class MillefeuilleMenuViewController: UIViewController {
   
-  weak var millefeuille: MillefeuilleViewController?
-
-
+  public weak var millefeuille: MillefeuilleViewController?
+  
+  
 }

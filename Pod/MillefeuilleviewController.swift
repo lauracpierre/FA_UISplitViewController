@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-class MillefeuilleViewController: UIViewController {
+public class MillefeuilleViewController: UIViewController {
   
   /// Segue name to create the left menu that will overlay the application
   private var loadMenuSegueIdentifier = "loadMenu"
@@ -20,8 +20,20 @@ class MillefeuilleViewController: UIViewController {
   /// variable to indicate whether or not we should check if the iPad start in Portrait mode to force the Overlay menu to appear
   private var modeCheckedAtLaunch = false
   
+  /// The gradient for the menu
+  private var menuRightGradient: CAGradientLayer!
+  
+  /// The gradient left color
+  private let leftGradientColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2).CGColor
+  
+  /// The gradient right color
+  private let rightGradientColor = UIColor.clearColor().CGColor
+  
+  /// The gradient width
+  private let gradientWidth: CGFloat = 8.0
+  
   /// A reference to the left menu view controller
-  private var leftViewController: UIViewController?
+  public var leftViewController: UIViewController?
   
   /// The view that we display in overlay of the application while we display the left menu
   private var viewOverlay = UIView()
@@ -38,10 +50,14 @@ class MillefeuilleViewController: UIViewController {
   /// the delegate to interact with the left menu in selectionWasMade
   var leftMenuDelegate: MillefeuilleLeftControllerSelectionProtocol?
   
-  override func viewDidLoad() {
+  
+  
+  
+  
+  override public func viewDidLoad() {
     super.viewDidLoad()
     
-    // Performing the two segues right now creates the view controllers needed for the application. 
+    // Performing the two segues right now creates the view controllers needed for the application.
     // It uses custom Segues in order to get a reference to the view controller
     self.performSegueWithIdentifier(loadMasterSegueIdentifier, sender: nil)
     self.performSegueWithIdentifier(loadMenuSegueIdentifier, sender: nil)
@@ -64,6 +80,13 @@ class MillefeuilleViewController: UIViewController {
     // Adding the left button on the detail view controller so that we can display the view controller if nothing is selected
     let navigationController = self.mainViewController.viewControllers[self.mainViewController.viewControllers.count-1] as! UINavigationController
     navigationController.topViewController!.navigationItem.leftBarButtonItem = self.mainViewController.displayModeButtonItem()
+    
+    // setting up the gradient:
+    self.menuRightGradient = CAGradientLayer()
+    //self.menuRightGradient.colors = [self.leftGradientColor, self.rightGradientColor]
+    self.menuRightGradient.startPoint = CGPointMake(0, 0.5)
+    self.menuRightGradient.endPoint = CGPointMake(1, 0.5)
+    self.leftViewController?.view.layer.addSublayer(self.menuRightGradient)
   }
   
   /**
@@ -104,11 +127,16 @@ class MillefeuilleViewController: UIViewController {
     UIView.animateWithDuration(self.animationTimeDuration, animations: {
       self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.0)
       self.leftViewController?.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, self.leftViewController!.view.frame.height)
+      
+      CATransaction.begin()
+      CATransaction.setAnimationDuration(self.animationTimeDuration )
+      self.menuRightGradient.colors = [self.rightGradientColor, self.rightGradientColor]
+      CATransaction.commit()
     }) { (_) in
       self.removeMenusFromSuperview()
     }
   }
-
+  
   /**
    * Check if the device is in Landscape mode
    */
@@ -127,7 +155,7 @@ class MillefeuilleViewController: UIViewController {
   /**
    * Check if the device is in Landscape mode
    */
-  override func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
+  override public func willRotateToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
     self.hideMenusImmediately()
     self.changePreferredDisplayMode(!self.isPortrait())
   }
@@ -142,12 +170,19 @@ class MillefeuilleViewController: UIViewController {
       UIView.animateWithDuration(self.animationTimeDuration, animations: {
         self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.5)
         leftMenuView.frame = CGRectMake(0, 0, self.leftMenuWidth, leftMenuView.frame.height)
+        self.menuRightGradient.frame = CGRectMake(self.leftMenuWidth, 0, self.gradientWidth, leftMenuView.frame.height)
+        
+        CATransaction.begin()
+        CATransaction.setAnimationDuration(self.animationTimeDuration)
+        self.menuRightGradient.colors = [self.leftGradientColor, self.rightGradientColor]
+        CATransaction.commit()
+        
       })
       
     }
   }
   
-  func selectionWasMade() {
+  public func selectionWasMade() {
     guard let delegate = self.leftMenuDelegate else {
       return
     }
@@ -158,6 +193,7 @@ class MillefeuilleViewController: UIViewController {
     }
     
     self.passObjectToMasterViewController()
+    self.hideMenus()
   }
   
   func passObjectToMasterViewController() {
@@ -190,9 +226,9 @@ class MillefeuilleViewController: UIViewController {
   private func hideMenusImmediately() {
     self.removeMenusFromSuperview()
   }
-
+  
   /**
-   * Removes the menu from the superview in order: 
+   * Removes the menu from the superview in order:
    * - Avoid constraint breaking during rotation
    * - Be less heavy on the UI resources
    */
@@ -228,6 +264,10 @@ class MillefeuilleViewController: UIViewController {
     self.viewOverlay.frame = newFrame
     keyWindow.addSubview(self.viewOverlay)
     
+    
+    self.menuRightGradient.colors = [self.rightGradientColor, self.rightGradientColor]
+    self.menuRightGradient.frame = CGRectMake(0, 0, self.gradientWidth, o.height)
+    
     leftVC.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, o.height)
     keyWindow.addSubview(leftVC.view)
   }
@@ -236,7 +276,7 @@ class MillefeuilleViewController: UIViewController {
 // MARK: - Delegate method for UISplitView
 extension MillefeuilleViewController: UISplitViewControllerDelegate {
   
-  func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController:UIViewController, ontoPrimaryViewController primaryViewController:UIViewController) -> Bool {
+  public func splitViewController(splitViewController: UISplitViewController, collapseSecondaryViewController secondaryViewController:UIViewController, ontoPrimaryViewController primaryViewController:UIViewController) -> Bool {
     guard let master = self.getMillefeuilleMasterMinimalImplementationObject() else {
       return false
     }
@@ -247,7 +287,7 @@ extension MillefeuilleViewController: UISplitViewControllerDelegate {
 }
 
 // MARK: - Communication protocols
-protocol MillefeuilleLeftControllerSelectionProtocol {
+public protocol MillefeuilleLeftControllerSelectionProtocol {
   
   /**
    * Delegate method asking if the left controller wants to pass an object to the splitViewcontroller's master controller
@@ -258,7 +298,7 @@ protocol MillefeuilleLeftControllerSelectionProtocol {
   func shouldPassObject() -> AnyObject?
   
   /**
-   * Delegate method asking the left controller if the current master controller is the right one or not, and 
+   * Delegate method asking the left controller if the current master controller is the right one or not, and
    * the MillefeuilleViewController should execute the segue to replace the masterViewController
    */
   func shouldPerformSegue() -> Bool
@@ -271,14 +311,14 @@ protocol MillefeuilleLeftControllerSelectionProtocol {
 }
 
 
-protocol MillefeuilleMasterViewMinimalImplementation {
+public protocol MillefeuilleMasterViewMinimalImplementation {
   
   /**
    * Protocol to implement in order to be notified when the left menu changed the selection
    */
   func selectionChangedInMenu(object: AnyObject?)
   
-  /** 
+  /**
    * Asking the master view if it is already displaying the detail view
    */
   func detailIsDisplayingItem() -> Bool
@@ -328,10 +368,12 @@ class FA_SetSplitViewFromMenuSegue: UIStoryboardSegue {
         splitViewController.delegate = source
       }
       
+      source.passObjectToMasterViewController()
+      source.hideMenus()
+      
       // Presenting the views and keeping reference to the controller
       source.addChildViewController(self.destinationViewController)
       source.view.addSubview(self.destinationViewController.view)
-
     }
   }
 }
