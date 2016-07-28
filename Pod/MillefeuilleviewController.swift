@@ -93,7 +93,7 @@ public class MillefeuilleViewController: UIViewController {
    * Call this method to hide the menu. The completion call back will be called when the animation has completed.
    */
   public func closeLeftMenu(completion: (() -> Void)? = nil) {
-    self.hideMenus()
+    self.hideMenus(completion)
   }
   
   /**
