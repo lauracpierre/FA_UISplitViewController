@@ -90,6 +90,13 @@ public class MillefeuilleViewController: UIViewController {
   }
   
   /**
+   * Call this method to hide the menu. The completion call back will be called when the animation has completed.
+   */
+  public func closeLeftMenu(completion: (() -> Void)? = nil) {
+    self.hideMenus()
+  }
+  
+  /**
    * Method called when the overlay receives a tap gesture
    * The goal is to hide the menu and the overlay
    */
@@ -123,7 +130,7 @@ public class MillefeuilleViewController: UIViewController {
    * Method to call in order to hide the menu with the overlay menu.
    * This method will add the menuview and the overlay to the KeyWindow in order to always be over the master view
    */
-  func hideMenus() {
+  func hideMenus(completion: (() -> Void)? = nil) {
     UIView.animateWithDuration(self.animationTimeDuration, animations: {
       self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.0)
       self.leftViewController?.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, self.leftViewController!.view.frame.height)
@@ -134,6 +141,7 @@ public class MillefeuilleViewController: UIViewController {
       CATransaction.commit()
     }) { (_) in
       self.removeMenusFromSuperview()
+      completion?()
     }
   }
   
