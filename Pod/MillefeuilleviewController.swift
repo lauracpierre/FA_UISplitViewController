@@ -45,7 +45,7 @@ public class MillefeuilleViewController: UIViewController {
   var animationTimeDuration: NSTimeInterval = 0.3
   
   /// the main view displayed at all time in the device. For now, only supporting UISplitViewController
-  var mainViewController: UISplitViewController!
+  public var mainViewController: UISplitViewController!
   
   /// the delegate to interact with the left menu in selectionWasMade
   var leftMenuDelegate: MillefeuilleLeftControllerSelectionProtocol?
