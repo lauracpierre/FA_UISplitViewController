@@ -41,6 +41,10 @@ public class MillefeuilleViewController: UIViewController {
   /// the delegate to interact with the left menu in selectionWasMade
   var leftMenuDelegate: MillefeuilleLeftControllerSelectionProtocol?
   
+  var leftMenuVisible: Bool = false
+  
+  let panGestureXLocationStart: CGFloat = 70.0
+  
   override public func viewDidLoad() {
     super.viewDidLoad()
     
@@ -130,6 +134,7 @@ public class MillefeuilleViewController: UIViewController {
       self.removeMenusFromSuperview()
       completion?()
     }
+    self.leftMenuVisible = false
   }
   
   /**
@@ -174,6 +179,7 @@ public class MillefeuilleViewController: UIViewController {
         self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.5)
         leftMenuView.frame = CGRectMake(0, 0, self.leftMenuWidth, leftMenuView.frame.height)
       })
+      self.leftMenuVisible = true
     }
   }
   
@@ -220,6 +226,7 @@ public class MillefeuilleViewController: UIViewController {
    */
   private func hideMenusImmediately() {
     self.removeMenusFromSuperview()
+    self.leftMenuVisible = false
   }
   
   /**
@@ -271,9 +278,10 @@ public class MillefeuilleViewController: UIViewController {
     guard let master = self.mainViewController else { return }
     guard let view = master.viewControllers.first?.view else { return }
     
-    let gesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.showMenus))
-    gesture.edges = .Left
-    view.addGestureRecognizer(gesture)
+    let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.handlePanGesture(_:)))
+    panGestureRecognizer.delegate = self
+    view.addGestureRecognizer(panGestureRecognizer)
+
   }
 }
 
@@ -286,6 +294,48 @@ extension MillefeuilleViewController: UISplitViewControllerDelegate {
     }
     
     return !master.detailIsDisplayingItem()
+  }
+}
+
+extension MillefeuilleViewController: UIGestureRecognizerDelegate {
+  func handlePanGesture(recognizer: UIPanGestureRecognizer) {
+    guard let gestureView = self.mainViewController.viewControllers.first?.view else { return }
+    // Only want gesture from the side of the screen
+    if !self.leftMenuVisible && recognizer.locationInView(gestureView).x > self.panGestureXLocationStart {
+      return
+    }
+    
+    
+    // Checking if menu is closed and blocking any gesture beside left to right
+    // no need to check for closing, as the overlay view is responsible for that
+    let gestureIsDraggingFromLeftToRight = (recognizer.velocityInView(gestureView).x > 80)
+    if !self.leftMenuVisible && !gestureIsDraggingFromLeftToRight {
+      return
+    }
+    
+    
+    // Simple gesture with no drag and drop
+    switch(recognizer.state) {
+      
+    case .Changed:
+      self.showMenus()
+      break
+    default:
+      break
+    }
+  }
+
+  public func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+    
+    if gestureRecognizer is UITapGestureRecognizer {
+      // We have to "disable" tap gesture when collapse otherwise we will prevent
+      // the view to handle normal tap gesture (like on UITableView)
+      if !self.leftMenuVisible {
+        return false
+      }
+    }
+    
+    return true
   }
 }
 
