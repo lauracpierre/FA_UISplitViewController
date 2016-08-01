@@ -279,6 +279,19 @@ public class MillefeuilleViewController: UIViewController {
     leftVC.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, o.height)
     keyWindow.addSubview(leftVC.view)
   }
+  
+  /**
+   * Add the swiping gesture to the split view first controller
+   * The gesture is added at this level so that in iPad Portrait mode, you can still display the menu i noverlay and then use the gesture again to open the left menu
+   */
+  private func addSwipeGestureToMasterViewController() {
+    guard let master = self.mainViewController else { return }
+    guard let view = master.viewControllers.first?.view else { return }
+    
+    let gesture = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.showMenus))
+    gesture.edges = .Left
+    view.addGestureRecognizer(gesture)
+  }
 }
 
 // MARK: - Delegate method for UISplitView
@@ -291,7 +304,6 @@ extension MillefeuilleViewController: UISplitViewControllerDelegate {
     
     return !master.detailIsDisplayingItem()
   }
-  
 }
 
 // MARK: - Communication protocols
@@ -347,6 +359,7 @@ class FA_SetSplitViewSegue: UIStoryboardSegue {
       source.mainViewController = main
       source.addChildViewController(self.destinationViewController)
       source.view.addSubview(self.destinationViewController.view)
+      source.addSwipeGestureToMasterViewController()
       
       if let splitViewController = self.destinationViewController as? UISplitViewController {
         splitViewController.delegate = source
@@ -378,6 +391,7 @@ class FA_SetSplitViewFromMenuSegue: UIStoryboardSegue {
       
       source.passObjectToMasterViewController()
       source.hideMenus()
+      source.addSwipeGestureToMasterViewController()
       
       // Presenting the views and keeping reference to the controller
       source.addChildViewController(self.destinationViewController)
