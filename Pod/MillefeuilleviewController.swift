@@ -276,12 +276,12 @@ public class MillefeuilleViewController: UIViewController {
    */
   private func addSwipeGestureToMasterViewController() {
     guard let master = self.mainViewController else { return }
-    guard let view = master.viewControllers.first?.view else { return }
+    guard let nav = master.viewControllers.first as? UINavigationController else { return }
+    guard let view = nav.viewControllers.first?.view else { return }
     
     let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.handlePanGesture(_:)))
     panGestureRecognizer.delegate = self
     view.addGestureRecognizer(panGestureRecognizer)
-
   }
 }
 
@@ -313,6 +313,11 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
       return
     }
     
+    // Checking if menu is open and blocking any gesting beside right to left
+    let gestureIsDraggingFromRightToLeft = (recognizer.velocityInView(gestureView).x < 10)
+    if self.leftMenuVisible && !gestureIsDraggingFromRightToLeft {
+      return
+    }
     
     // Simple gesture with no drag and drop
     switch(recognizer.state) {
@@ -324,7 +329,7 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
       break
     }
   }
-
+  
   public func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
     
     if gestureRecognizer is UITapGestureRecognizer {
