@@ -20,17 +20,8 @@ public class MillefeuilleViewController: UIViewController {
   /// variable to indicate whether or not we should check if the iPad start in Portrait mode to force the Overlay menu to appear
   private var modeCheckedAtLaunch = false
   
-  /// The gradient for the menu
-  private var menuRightGradient: CAGradientLayer!
-  
-  /// The gradient left color
-  private let leftGradientColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.2).CGColor
-  
-  /// The gradient right color
-  private let rightGradientColor = UIColor.clearColor().CGColor
-  
-  /// The gradient width
-  private let gradientWidth: CGFloat = 8.0
+  /// Variable to change the opacity of the menu drop shadow
+  public var dropShadowOpacity: Float = 0.8
   
   /// A reference to the left menu view controller
   public var leftViewController: UIViewController?
@@ -49,10 +40,6 @@ public class MillefeuilleViewController: UIViewController {
   
   /// the delegate to interact with the left menu in selectionWasMade
   var leftMenuDelegate: MillefeuilleLeftControllerSelectionProtocol?
-  
-  
-  
-  
   
   override public func viewDidLoad() {
     super.viewDidLoad()
@@ -81,12 +68,9 @@ public class MillefeuilleViewController: UIViewController {
     let navigationController = self.mainViewController.viewControllers[self.mainViewController.viewControllers.count-1] as! UINavigationController
     navigationController.topViewController!.navigationItem.leftBarButtonItem = self.mainViewController.displayModeButtonItem()
     
-    // setting up the gradient:
-    self.menuRightGradient = CAGradientLayer()
-    //self.menuRightGradient.colors = [self.leftGradientColor, self.rightGradientColor]
-    self.menuRightGradient.startPoint = CGPointMake(0, 0.5)
-    self.menuRightGradient.endPoint = CGPointMake(1, 0.5)
-    self.leftViewController?.view.layer.addSublayer(self.menuRightGradient)
+    self.leftViewController?.view.layer.shadowColor = UIColor.blackColor().CGColor
+    self.leftViewController?.view.layer.shadowOffset = CGSize(width: 0, height: 0)
+    //self.leftViewController?.view.layer.shadowOpacity = 0.8
   }
   
   /**
@@ -131,14 +115,17 @@ public class MillefeuilleViewController: UIViewController {
    * This method will add the menuview and the overlay to the KeyWindow in order to always be over the master view
    */
   func hideMenus(completion: (() -> Void)? = nil) {
+    
+    let animation = CABasicAnimation(keyPath: "shadowOpacity")
+    animation.toValue = self.dropShadowOpacity
+    animation.fromValue = NSNumber(float: 0.0)
+    animation.duration = self.animationTimeDuration
+    self.leftViewController?.view.layer.addAnimation(animation, forKey: "shadowOpacity")
+    self.leftViewController?.view.layer.shadowOpacity = 0.0
+    
     UIView.animateWithDuration(self.animationTimeDuration, animations: {
       self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.0)
       self.leftViewController?.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, self.leftViewController!.view.frame.height)
-      
-      CATransaction.begin()
-      CATransaction.setAnimationDuration(self.animationTimeDuration )
-      self.menuRightGradient.colors = [self.rightGradientColor, self.rightGradientColor]
-      CATransaction.commit()
     }) { (_) in
       self.removeMenusFromSuperview()
       completion?()
@@ -175,18 +162,18 @@ public class MillefeuilleViewController: UIViewController {
   func showMenus() {
     if let leftMenuView = self.leftViewController?.view {
       self.addLeftMenuToKeyWindow()
+      
+      let animation = CABasicAnimation(keyPath: "shadowOpacity")
+      animation.toValue = NSNumber(float: 0.0)
+      animation.fromValue = self.dropShadowOpacity
+      animation.duration = self.animationTimeDuration
+      leftMenuView.layer.addAnimation(animation, forKey: "shadowOpacity")
+      leftMenuView.layer.shadowOpacity = self.dropShadowOpacity
+      
       UIView.animateWithDuration(self.animationTimeDuration, animations: {
         self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.5)
         leftMenuView.frame = CGRectMake(0, 0, self.leftMenuWidth, leftMenuView.frame.height)
-        self.menuRightGradient.frame = CGRectMake(self.leftMenuWidth, 0, self.gradientWidth, leftMenuView.frame.height)
-        
-        CATransaction.begin()
-        CATransaction.setAnimationDuration(self.animationTimeDuration)
-        self.menuRightGradient.colors = [self.leftGradientColor, self.rightGradientColor]
-        CATransaction.commit()
-        
       })
-      
     }
   }
   
@@ -271,10 +258,6 @@ public class MillefeuilleViewController: UIViewController {
     let newFrame = CGRectMake(0, 0, o.width, o.height)
     self.viewOverlay.frame = newFrame
     keyWindow.addSubview(self.viewOverlay)
-    
-    
-    self.menuRightGradient.colors = [self.rightGradientColor, self.rightGradientColor]
-    self.menuRightGradient.frame = CGRectMake(0, 0, self.gradientWidth, o.height)
     
     leftVC.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, o.height)
     keyWindow.addSubview(leftVC.view)
