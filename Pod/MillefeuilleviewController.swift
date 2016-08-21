@@ -350,8 +350,7 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
       
       let velocityX = recognizer.velocityInView(gestureView).x,
           remainingDistance = self.leftMenuWidth - gestureTranslation,
-          duration = Double(remainingDistance / velocityX),
-          shadowStart = leftMenuView.layer.shadowOpacity
+          duration = Double(remainingDistance / velocityX)
       
       // positive velocity, we are opening the menu, 
       // let's check the velocity to decide wether to close or open
