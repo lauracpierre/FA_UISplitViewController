@@ -65,7 +65,7 @@ public class MillefeuilleViewController: UIViewController {
     // Registering to a show/hide events in order to display the left menu
     let center = NSNotificationCenter.defaultCenter()
     center.addObserver(self, selector: #selector(MillefeuilleViewController.showMenus), name: MillefeuilleViewController.MILLEFEUILLE_SHOW_MENU, object: nil)
-    center.addObserver(self, selector: #selector(MillefeuilleViewController.hideMenus), name: MillefeuilleViewController.MILLEFEUILLE_HIDE_MENU, object: nil)
+    center.addObserver(self, selector: #selector(MillefeuilleViewController.hideMenuFromNotification), name: MillefeuilleViewController.MILLEFEUILLE_HIDE_MENU, object: nil)
     
     // Preparing the overlay view
     let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.overlayViewWasSwiped))
@@ -126,6 +126,10 @@ public class MillefeuilleViewController: UIViewController {
    */
   func hideMenus(completion: (() -> Void)? = nil) {
     self.hideMenuFromCurrentFrame(self.animationTimeDuration, shadowStart: 0.0, completion: completion)
+  }
+  
+  func hideMenuFromNotification() {
+    self.hideMenus()
   }
   
   func hideMenuFromCurrentFrame(duration: NSTimeInterval, shadowStart: Float, completion: (() -> Void)? = nil) {
