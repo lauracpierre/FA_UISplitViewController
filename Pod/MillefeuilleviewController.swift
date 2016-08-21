@@ -43,7 +43,13 @@ public class MillefeuilleViewController: UIViewController {
   
   var leftMenuVisible: Bool = false
   
+  var gestureToDisplayOngoing: Bool = false
+  
   let panGestureXLocationStart: CGFloat = 70.0
+  
+  public static let MILLEFEUILLE_SHOW_MENU = "MILLEFEUILLE_SHOW_MENU_NOTIFICATION_NAME"
+  
+  public static let MILLEFEUILLE_HIDE_MENU = "MILLEFEUILLE_HIDE_MENU_NOTIFICATION_NAME"
   
   override public func viewDidLoad() {
     super.viewDidLoad()
@@ -58,8 +64,8 @@ public class MillefeuilleViewController: UIViewController {
     
     // Registering to a show/hide events in order to display the left menu
     let center = NSNotificationCenter.defaultCenter()
-    center.addObserver(self, selector: #selector(MillefeuilleViewController.showMenus), name: "SHOW_MENU", object: nil)
-    center.addObserver(self, selector: #selector(MillefeuilleViewController.hideMenus), name: "HIDE_MENU", object: nil)
+    center.addObserver(self, selector: #selector(MillefeuilleViewController.showMenus), name: MillefeuilleViewController.MILLEFEUILLE_SHOW_MENU, object: nil)
+    center.addObserver(self, selector: #selector(MillefeuilleViewController.hideMenus), name: MillefeuilleViewController.MILLEFEUILLE_HIDE_MENU, object: nil)
     
     // Preparing the overlay view
     let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.overlayViewWasSwiped))
@@ -165,6 +171,7 @@ public class MillefeuilleViewController: UIViewController {
    * This method will add the menuview and the overlay to the KeyWindow in order to always be over the master view
    */
   func showMenus() {
+    self.leftMenuVisible = true
     if let leftMenuView = self.leftViewController?.view {
       self.addLeftMenuToKeyWindow()
       
@@ -179,7 +186,7 @@ public class MillefeuilleViewController: UIViewController {
         self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.5)
         leftMenuView.frame = CGRectMake(0, 0, self.leftMenuWidth, leftMenuView.frame.height)
       })
-      self.leftMenuVisible = true
+      
     }
   }
   
@@ -300,6 +307,8 @@ extension MillefeuilleViewController: UISplitViewControllerDelegate {
 extension MillefeuilleViewController: UIGestureRecognizerDelegate {
   func handlePanGesture(recognizer: UIPanGestureRecognizer) {
     guard let gestureView = self.mainViewController.viewControllers.first?.view else { return }
+    
+    NSLog("gesture, menu showing: \(self.leftMenuVisible)")
     // Only want gesture from the side of the screen
     if !self.leftMenuVisible && recognizer.locationInView(gestureView).x > self.panGestureXLocationStart {
       return
@@ -313,6 +322,12 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
       return
     }
     
+    
+    // If we already displayed the menu, and the gesture is still to open, ignore
+    if self.gestureToDisplayOngoing && self.leftMenuVisible {
+      return
+    }
+    
     // Checking if menu is open and blocking any gesting beside right to left
     let gestureIsDraggingFromRightToLeft = (recognizer.velocityInView(gestureView).x < 10)
     if self.leftMenuVisible && !gestureIsDraggingFromRightToLeft {
@@ -321,11 +336,14 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
     
     // Simple gesture with no drag and drop
     switch(recognizer.state) {
-      
+    case .Began:
+      self.gestureToDisplayOngoing = true
+      break
     case .Changed:
       self.showMenus()
       break
-    default:
+    default: // ended
+      self.gestureToDisplayOngoing = false
       break
     }
   }
