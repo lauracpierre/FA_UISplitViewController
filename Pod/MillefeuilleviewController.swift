@@ -125,22 +125,26 @@ public class MillefeuilleViewController: UIViewController {
    * This method will add the menuview and the overlay to the KeyWindow in order to always be over the master view
    */
   func hideMenus(completion: (() -> Void)? = nil) {
+    self.hideMenuFromCurrentFrame(self.animationTimeDuration, shadowStart: 0.0, completion: completion)
+  }
+  
+  func hideMenuFromCurrentFrame(duration: NSTimeInterval, shadowStart: Float, completion: (() -> Void)? = nil) {
+    self.leftMenuVisible = false
     
     let animation = CABasicAnimation(keyPath: "shadowOpacity")
     animation.toValue = self.dropShadowOpacity
-    animation.fromValue = NSNumber(float: 0.0)
+    animation.fromValue = NSNumber(float: shadowStart)
     animation.duration = self.animationTimeDuration
     self.leftViewController?.view.layer.addAnimation(animation, forKey: "shadowOpacity")
-    self.leftViewController?.view.layer.shadowOpacity = 0.0
+    self.leftViewController?.view.layer.shadowOpacity = shadowStart
     
-    UIView.animateWithDuration(self.animationTimeDuration, animations: {
+    UIView.animateWithDuration(self.animationTimeDuration, delay: 0.0, options: [.AllowUserInteraction], animations: {
       self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.0)
       self.leftViewController?.view.frame = CGRectMake(-self.leftMenuWidth, 0, self.leftMenuWidth, self.leftViewController!.view.frame.height)
     }) { (_) in
       self.removeMenusFromSuperview()
       completion?()
     }
-    self.leftMenuVisible = false
   }
   
   /**
@@ -172,22 +176,25 @@ public class MillefeuilleViewController: UIViewController {
    */
   func showMenus() {
     self.leftMenuVisible = true
-    if let leftMenuView = self.leftViewController?.view {
-      self.addLeftMenuToKeyWindow()
-      
-      let animation = CABasicAnimation(keyPath: "shadowOpacity")
-      animation.toValue = NSNumber(float: 0.0)
-      animation.fromValue = self.dropShadowOpacity
-      animation.duration = self.animationTimeDuration
-      leftMenuView.layer.addAnimation(animation, forKey: "shadowOpacity")
-      leftMenuView.layer.shadowOpacity = self.dropShadowOpacity
-      
-      UIView.animateWithDuration(self.animationTimeDuration, animations: {
-        self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.5)
-        leftMenuView.frame = CGRectMake(0, 0, self.leftMenuWidth, leftMenuView.frame.height)
-      })
-      
-    }
+    self.addLeftMenuToKeyWindow()
+    self.showMenuFromCurrentFrame(self.animationTimeDuration, shadowStart: self.dropShadowOpacity)
+  }
+  
+  private func showMenuFromCurrentFrame(animationDuration: NSTimeInterval, shadowStart: Float) {
+    guard let leftMenuView = self.leftViewController?.view else { return }
+    
+    let animation = CABasicAnimation(keyPath: "shadowOpacity")
+    animation.toValue = NSNumber(float: shadowStart)
+    animation.fromValue = self.dropShadowOpacity
+    animation.duration = self.animationTimeDuration
+    leftMenuView.layer.addAnimation(animation, forKey: "shadowOpacity")
+    leftMenuView.layer.shadowOpacity = self.dropShadowOpacity
+
+    
+    UIView.animateWithDuration(self.animationTimeDuration, delay: 0.0, options: [.AllowUserInteraction], animations: { 
+      self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(0.5)
+      leftMenuView.frame = CGRectMake(0, 0, self.leftMenuWidth, leftMenuView.frame.height)
+    }, completion: nil)
   }
   
   public func selectionWasMade() {
@@ -307,43 +314,79 @@ extension MillefeuilleViewController: UISplitViewControllerDelegate {
 extension MillefeuilleViewController: UIGestureRecognizerDelegate {
   func handlePanGesture(recognizer: UIPanGestureRecognizer) {
     guard let gestureView = self.mainViewController.viewControllers.first?.view else { return }
-    
-    NSLog("gesture, menu showing: \(self.leftMenuVisible)")
-    // Only want gesture from the side of the screen
-    if !self.leftMenuVisible && recognizer.locationInView(gestureView).x > self.panGestureXLocationStart {
-      return
-    }
-    
-    
-    // Checking if menu is closed and blocking any gesture beside left to right
-    // no need to check for closing, as the overlay view is responsible for that
-    let gestureIsDraggingFromLeftToRight = (recognizer.velocityInView(gestureView).x > 80)
-    if !self.leftMenuVisible && !gestureIsDraggingFromLeftToRight {
-      return
-    }
-    
-    
-    // If we already displayed the menu, and the gesture is still to open, ignore
-    if self.gestureToDisplayOngoing && self.leftMenuVisible {
-      return
-    }
-    
-    // Checking if menu is open and blocking any gesting beside right to left
-    let gestureIsDraggingFromRightToLeft = (recognizer.velocityInView(gestureView).x < 10)
-    if self.leftMenuVisible && !gestureIsDraggingFromRightToLeft {
-      return
-    }
+    guard let leftMenuView = self.leftViewController?.view else { return }
     
     // Simple gesture with no drag and drop
+    let gestureTranslation = recognizer.translationInView(gestureView).x,
+        horizontalChange = (gestureTranslation < self.leftMenuWidth) ? gestureTranslation : self.leftMenuWidth,
+        positionStart = (-self.leftMenuWidth + horizontalChange),
+        distance = (horizontalChange / self.leftMenuWidth),
+        shadow = Float(distance * 0.8),
+        alpha = distance * 0.5
+    
     switch(recognizer.state) {
     case .Began:
       self.gestureToDisplayOngoing = true
+      self.addLeftMenuToKeyWindow()
       break
     case .Changed:
-      self.showMenus()
+      
+      self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.colorWithAlphaComponent(alpha)
+      leftMenuView.frame = CGRectMake(positionStart, 0, self.leftMenuWidth, leftMenuView.frame.height)
+      leftMenuView.layer.shadowOpacity = shadow
       break
-    default: // ended
+      
+    case .Ended:
       self.gestureToDisplayOngoing = false
+      
+      // the gesture went further that the menu size, the menu is fully expanded, exiting
+      if gestureTranslation >= self.leftMenuWidth {
+        return
+      }
+      
+      let velocityX = recognizer.velocityInView(gestureView).x,
+          remainingDistance = self.leftMenuWidth - gestureTranslation,
+          duration = Double(remainingDistance / velocityX),
+          shadowStart = leftMenuView.layer.shadowOpacity
+      
+      // positive velocity, we are opening the menu, 
+      // let's check the velocity to decide wether to close or open
+      if velocityX > 0 {
+
+        // if the velocity is fast, let's open the menu right away at the correct speed
+        if velocityX > 100 {
+          self.showMenuFromCurrentFrame(duration, shadowStart: shadow)
+          return
+        }
+        
+        // velocity is slow, let's check how much we opened of the menu. if more than half, open the menu
+        if remainingDistance < self.leftMenuWidth / 2 {
+          self.showMenuFromCurrentFrame(duration, shadowStart: shadow)
+          return
+        }
+        
+        // let's hide it
+        self.hideMenuFromCurrentFrame(duration, shadowStart: shadow)
+        return
+      }
+      
+      // with a negative velocity, we are potentially closing the menu
+      // let's checking the velocity to decide
+      if velocityX < -150 {
+        self.hideMenuFromCurrentFrame(duration, shadowStart: shadow)
+        return
+      }
+      
+      // velocity is slow, let's check how much we closed of the menu. if more than half, open the menu
+      if remainingDistance < self.leftMenuWidth / 2 {
+        self.showMenuFromCurrentFrame(duration, shadowStart: shadow)
+        return
+      }
+      
+      // let's hide it
+      self.hideMenuFromCurrentFrame(duration, shadowStart: shadow)
+      return
+    default:
       break
     }
   }
