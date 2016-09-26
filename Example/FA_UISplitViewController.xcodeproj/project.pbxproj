@@ -11,7 +11,6 @@
 		7A019E651D0B5DB200852D21 /* FA_UISplitViewController.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 7A019E621D0B5DB200852D21 /* FA_UISplitViewController.podspec */; };
 		7A019E661D0B5DB200852D21 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7A019E631D0B5DB200852D21 /* LICENSE */; };
 		7A019E671D0B5DB200852D21 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 7A019E641D0B5DB200852D21 /* README.md */; };
-		7A11CBF51CF37695000E0D9A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7AB38F9D1CEBC59E007C73F1 /* Info.plist */; };
 		7AB1AC871D0B7422001FFB31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB1AC831D0B7422001FFB31 /* LaunchScreen.storyboard */; };
 		7AB1AC881D0B7422001FFB31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB1AC851D0B7422001FFB31 /* Main.storyboard */; };
 		7AB1AC8A1D0B750E001FFB31 /* FA_leftMenuImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB1AC891D0B750E001FFB31 /* FA_leftMenuImplementation.swift */; };
@@ -135,12 +134,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0730;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Pierre Laurac";
 				TargetAttributes = {
 					7AB38F8B1CEBC59E007C73F1 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = X549L7572J;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -168,7 +168,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7AB1AC881D0B7422001FFB31 /* Main.storyboard in Resources */,
-				7A11CBF51CF37695000E0D9A /* Info.plist in Resources */,
 				7A019E651D0B5DB200852D21 /* FA_UISplitViewController.podspec in Resources */,
 				7A019E661D0B5DB200852D21 /* LICENSE in Resources */,
 				7AB1AC871D0B7422001FFB31 /* LaunchScreen.storyboard in Resources */,
@@ -231,8 +230,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -277,8 +278,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
@@ -297,6 +300,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -314,6 +318,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
 				PRODUCT_NAME = FA_UISplitViewController;
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -329,6 +334,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
 				PRODUCT_NAME = FA_UISplitViewController;
 				PROVISIONING_PROFILE = "";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
