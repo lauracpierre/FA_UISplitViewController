@@ -21,25 +21,25 @@ class FA_LeftMenuImplementation: MillefeuilleMenuViewController, MillefeuilleLef
     super.viewDidLoad()
     
     //self.tableView = UITableView
-    self.tableView  = UITableView(frame: CGRectZero)
+    self.tableView  = UITableView(frame: CGRect.zero)
     self.tableView.translatesAutoresizingMaskIntoConstraints = false
-    self.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "cell")
+    self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
     self.tableView.delegate = self
     self.tableView.dataSource = self
     
     self.view.addSubview(self.tableView)
     
-    let views = ["tableView": self.tableView]
+    let views = ["tableView": self.tableView!]
     
-    self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("V:|[tableView]|", options: [], metrics: nil, views: views))
-    self.view.addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|[tableView]|", options: [], metrics: nil, views: views))
+    self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]|", options: [], metrics: nil, views: views))
+    self.view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", options: [], metrics: nil, views: views))
     
     self.navigationController?.title = "hello"
   }
   
 
   func shouldPassObject() -> AnyObject? {
-      return "test"
+      return "test" as AnyObject?
   }
 
   func shouldPerformSegue() -> Bool {
@@ -51,12 +51,12 @@ class FA_LeftMenuImplementation: MillefeuilleMenuViewController, MillefeuilleLef
       return
     }
     
-    if path.row == 0 {
-      self.performSegueWithIdentifier("setZero", sender: self)
+    if (path as NSIndexPath).row == 0 {
+      self.performSegue(withIdentifier: "setZero", sender: self)
     }
     
-    if path.row == 1 {
-      self.performSegueWithIdentifier("setOne", sender: self)
+    if (path as NSIndexPath).row == 1 {
+      self.performSegue(withIdentifier: "setOne", sender: self)
     }
   }
 
@@ -66,25 +66,25 @@ class FA_LeftMenuImplementation: MillefeuilleMenuViewController, MillefeuilleLef
 
 extension FA_LeftMenuImplementation: UITableViewDataSource, UITableViewDelegate {
   
-  func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+  func numberOfSections(in tableView: UITableView) -> Int {
     return 1
   }
   
-  func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return 2
   }
   
-  func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
     
-    cell.textLabel?.text = "cell \(indexPath.row)"
+    cell.textLabel?.text = "cell \((indexPath as NSIndexPath).row)"
     
     return cell
   }
   
-  func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     previousRow = selectedRow
-    selectedRow = indexPath.row
-    self.millefeuille?.selectionWasMade()
+    selectedRow = (indexPath as NSIndexPath).row
+    self.millefeuille?.selectionWasMade(hide: true)
   }
 }

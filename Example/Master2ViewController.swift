@@ -18,7 +18,7 @@ class Master2ViewController: UITableViewController {
     super.viewDidLoad()
     // Do any additional setup after loading the view, typically from a nib.
     
-    self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Menu", style: .Plain, target: self, action: #selector(MasterViewController.showMenu))
+    self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Menu", style: .plain, target: self, action: #selector(MasterViewController.showMenu))
     
     if let split = self.splitViewController {
       let controllers = split.viewControllers
@@ -26,8 +26,8 @@ class Master2ViewController: UITableViewController {
     }
   }
   
-  override func viewWillAppear(animated: Bool) {
-    self.clearsSelectionOnViewWillAppear = self.splitViewController!.collapsed
+  override func viewWillAppear(_ animated: Bool) {
+    self.clearsSelectionOnViewWillAppear = self.splitViewController!.isCollapsed
     super.viewWillAppear(animated)
   }
   
@@ -42,17 +42,17 @@ class Master2ViewController: UITableViewController {
   
   
   func showMenu() {
-    NSNotificationCenter.defaultCenter().postNotificationName("SHOW_MENU", object: nil)
+    NotificationCenter.default.post(name: Notification.Name(rawValue: "MILLEFEUILLE_SHOW_MENU_NOTIFICATION_NAME"), object: nil)
   }
   
   // MARK: - Segues
-  override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     if segue.identifier == "showDetail" {
       if let indexPath = self.tableView.indexPathForSelectedRow {
-        let object = objects[indexPath.row] as! NSDate
-        let controller = (segue.destinationViewController as! UINavigationController).topViewController as! DetailViewController
-        controller.detailItem = object
-        controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem()
+        let object = objects[(indexPath as NSIndexPath).row] as! Date
+        let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+        controller.detailItem = object as AnyObject?
+        controller.navigationItem.leftBarButtonItem = self.splitViewController?.displayModeButtonItem
         
         controller.navigationItem.leftItemsSupplementBackButton = true
       }
@@ -60,24 +60,24 @@ class Master2ViewController: UITableViewController {
   }
   
   // MARK: - Table View
-  override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+  override func numberOfSections(in tableView: UITableView) -> Int {
     return 1
   }
   
-  override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+  override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return 2
   }
   
-  override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
+  override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
     
-    cell.textLabel?.text = "secondary master \(indexPath.row)"
+    cell.textLabel?.text = "secondary master \((indexPath as NSIndexPath).row)"
     return cell
   }
 }
 
 extension Master2ViewController: MillefeuilleMasterViewMinimalImplementation {
-  func selectionChangedInMenu(object: AnyObject?) {
+  func selectionChangedInMenu(_ object: AnyObject?) {
     NSLog("changed: \(object)")
   }
   

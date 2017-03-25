@@ -33,8 +33,8 @@ class DetailViewController: UIViewController {
     NSLog("deinit DetailViewcontroller")
   }
 
-  @IBAction func showNext(sender: AnyObject) {
-    self.performSegueWithIdentifier("show", sender: nil)
+  @IBAction func showNext(_ sender: AnyObject) {
+    self.performSegue(withIdentifier: "show", sender: nil)
   }
   override func viewDidLoad() {
     super.viewDidLoad()
