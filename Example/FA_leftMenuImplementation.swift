@@ -85,6 +85,6 @@ extension FA_LeftMenuImplementation: UITableViewDataSource, UITableViewDelegate 
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     previousRow = selectedRow
     selectedRow = (indexPath as NSIndexPath).row
-    self.millefeuille?.selectionWasMade()
+    self.millefeuille?.selectionWasMade(hide: true)
   }
 }

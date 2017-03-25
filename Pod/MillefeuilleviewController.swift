@@ -201,7 +201,7 @@ open class MillefeuilleViewController: UIViewController {
     }, completion: nil)
   }
   
-  open func selectionWasMade() {
+  open func selectionWasMade(hide: Bool) {
     guard let delegate = self.leftMenuDelegate else {
       return
     }
@@ -212,7 +212,10 @@ open class MillefeuilleViewController: UIViewController {
     }
     
     self.passObjectToMasterViewController()
-    self.hideMenus()
+    
+    if (hide) {
+      self.hideMenus()
+    }
   }
   
   func passObjectToMasterViewController() {
