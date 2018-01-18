@@ -41,7 +41,7 @@ class Master2ViewController: UITableViewController {
   }
   
   
-  func showMenu() {
+  @objc func showMenu() {
     NotificationCenter.default.post(name: Notification.Name(rawValue: "MILLEFEUILLE_SHOW_MENU_NOTIFICATION_NAME"), object: nil)
   }
   
