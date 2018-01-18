@@ -78,7 +78,7 @@ class Master2ViewController: UITableViewController {
 
 extension Master2ViewController: MillefeuilleMasterViewMinimalImplementation {
   func selectionChangedInMenu(_ object: AnyObject?) {
-    NSLog("changed: \(object)")
+    NSLog("Selection changed")
   }
   
   func detailIsDisplayingItem() -> Bool {
