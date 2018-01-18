@@ -41,7 +41,7 @@ class Master2ViewController: UITableViewController {
   }
   
   
-  func showMenu() {
+  @objc func showMenu() {
     NotificationCenter.default.post(name: Notification.Name(rawValue: "MILLEFEUILLE_SHOW_MENU_NOTIFICATION_NAME"), object: nil)
   }
   
@@ -78,7 +78,7 @@ class Master2ViewController: UITableViewController {
 
 extension Master2ViewController: MillefeuilleMasterViewMinimalImplementation {
   func selectionChangedInMenu(_ object: AnyObject?) {
-    NSLog("changed: \(object)")
+    NSLog("Selection changed")
   }
   
   func detailIsDisplayingItem() -> Bool {

@@ -94,7 +94,7 @@ open class MillefeuilleViewController: UIViewController {
    * Method called when the overlay receives a tap gesture
    * The goal is to hide the menu and the overlay
    */
-  func overlayViewWasTapped() {
+  @objc func overlayViewWasTapped() {
     self.hideMenus()
   }
   
@@ -102,7 +102,7 @@ open class MillefeuilleViewController: UIViewController {
    * Method called when the overlay receives a swipe gesture
    * The goal is to hide the menu and the overlay
    */
-  func overlayViewWasSwiped() {
+  @objc func overlayViewWasSwiped() {
     self.hideMenus()
   }
   
@@ -128,7 +128,7 @@ open class MillefeuilleViewController: UIViewController {
     self.hideMenuFromCurrentFrame(self.animationTimeDuration, shadowStart: 0.0, completion: completion)
   }
   
-  func hideMenuFromNotification() {
+  @objc func hideMenuFromNotification() {
     self.hideMenus()
   }
   
@@ -178,7 +178,7 @@ open class MillefeuilleViewController: UIViewController {
    * Method to call in order to show the menu with the overlay menu.
    * This method will add the menuview and the overlay to the KeyWindow in order to always be over the master view
    */
-  func showMenus() {
+  @objc func showMenus() {
     self.leftMenuVisible = true
     self.addLeftMenuToKeyWindow()
     self.showMenuFromCurrentFrame(self.animationTimeDuration, shadowStart: self.dropShadowOpacity)
@@ -319,7 +319,7 @@ extension MillefeuilleViewController: UISplitViewControllerDelegate {
 }
 
 extension MillefeuilleViewController: UIGestureRecognizerDelegate {
-  func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
+  @objc func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
     guard let gestureView = self.mainViewController.viewControllers.first?.view else { return }
     guard let leftMenuView = self.leftViewController?.view else { return }
     
@@ -449,6 +449,17 @@ public protocol MillefeuilleMasterViewMinimalImplementation {
   func detailIsDisplayingItem() -> Bool
 }
 
+fileprivate extension UIView {
+  func constraintTo(view: UIView) {
+    NSLayoutConstraint.activate([
+      self.topAnchor.constraint(equalTo: view.topAnchor),
+      self.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+      self.leftAnchor.constraint(equalTo: view.leftAnchor),
+      self.rightAnchor.constraint(equalTo: view.rightAnchor)
+    ])
+  }
+}
+
 
 
 // MARK: - Custom Segues
@@ -464,6 +475,11 @@ class FA_SetSplitViewSegue: UIStoryboardSegue {
       source.mainViewController = main
       source.addChildViewController(self.destination)
       source.view.addSubview(self.destination.view)
+      
+      self.destination.didMove(toParentViewController: source)
+      self.destination.view.translatesAutoresizingMaskIntoConstraints = false
+      self.destination.view.constraintTo(view: source.view)
+
       source.addSwipeGestureToMasterViewController()
       
       if let splitViewController = self.destination as? UISplitViewController {
@@ -501,6 +517,10 @@ class FA_SetSplitViewFromMenuSegue: UIStoryboardSegue {
       // Presenting the views and keeping reference to the controller
       source.addChildViewController(self.destination)
       source.view.addSubview(self.destination.view)
+      
+      self.destination.didMove(toParentViewController: source)
+      self.destination.view.translatesAutoresizingMaskIntoConstraints = false
+      self.destination.view.constraintTo(view: source.view)
     }
   }
 }
