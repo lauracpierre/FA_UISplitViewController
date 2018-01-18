@@ -44,13 +44,13 @@ class MasterViewController: UITableViewController {
     NSLog("deinit MasterViewcontroller")
   }
 
-  func insertNewObject(_ sender: AnyObject) {
+  @objc func insertNewObject(_ sender: AnyObject) {
     objects.insert(Date() as AnyObject, at: 0)
     let indexPath = IndexPath(row: 0, section: 0)
     self.tableView.insertRows(at: [indexPath], with: .automatic)
   }
   
-  func showMenu() {
+  @objc func showMenu() {
       NotificationCenter.default.post(name: Notification.Name(rawValue: "MILLEFEUILLE_SHOW_MENU_NOTIFICATION_NAME"), object: nil)
   }
 
@@ -106,7 +106,7 @@ class MasterViewController: UITableViewController {
 
 extension MasterViewController: MillefeuilleMasterViewMinimalImplementation {
   func selectionChangedInMenu(_ object: AnyObject?) {
-    NSLog("changed: \(object)")
+    NSLog("Selection changed")
   }
   
   func detailIsDisplayingItem() -> Bool {
