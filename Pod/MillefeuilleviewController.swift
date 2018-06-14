@@ -300,7 +300,8 @@ open class MillefeuilleViewController: UIViewController {
     guard let nav = master.viewControllers.first as? UINavigationController else { return }
     guard let view = nav.viewControllers.first?.view else { return }
     
-    let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.handlePanGesture(_:)))
+    let panGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.handlePanGesture(_:)))
+    panGestureRecognizer.edges = [.left]
     panGestureRecognizer.delegate = self
     view.addGestureRecognizer(panGestureRecognizer)
   }
@@ -408,6 +409,14 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
     }
     
     return true
+  }
+  
+  public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    return gestureRecognizer is UIScreenEdgePanGestureRecognizer && otherGestureRecognizer is UIPanGestureRecognizer
+  }
+  
+  public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    return gestureRecognizer is UIScreenEdgePanGestureRecognizer && otherGestureRecognizer is UIPanGestureRecognizer
   }
 }
 

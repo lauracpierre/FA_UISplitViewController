@@ -9,7 +9,7 @@
 
 Pod::Spec.new do |s|
 s.name             = "FA_UISplitViewController"
-s.version          = "0.1.1"
+s.version          = "0.2"
 s.summary          = "FA_UISplitViewController is a controller to manage and add an overlay menu above the UISplitView"
 s.description      = <<-DESC
 This contoller let you add an overlay menu above the UISplitViewController.
