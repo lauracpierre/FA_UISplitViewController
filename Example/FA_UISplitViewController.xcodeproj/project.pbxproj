@@ -10,7 +10,6 @@
 		7A019E611D0A0E6F00852D21 /* Master2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A019E601D0A0E6F00852D21 /* Master2ViewController.swift */; };
 		7A019E651D0B5DB200852D21 /* FA_UISplitViewController.podspec in Resources */ = {isa = PBXBuildFile; fileRef = 7A019E621D0B5DB200852D21 /* FA_UISplitViewController.podspec */; };
 		7A019E661D0B5DB200852D21 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 7A019E631D0B5DB200852D21 /* LICENSE */; };
-		7A019E671D0B5DB200852D21 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 7A019E641D0B5DB200852D21 /* README.md */; };
 		7AB1AC871D0B7422001FFB31 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB1AC831D0B7422001FFB31 /* LaunchScreen.storyboard */; };
 		7AB1AC881D0B7422001FFB31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7AB1AC851D0B7422001FFB31 /* Main.storyboard */; };
 		7AB1AC8A1D0B750E001FFB31 /* FA_leftMenuImplementation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB1AC891D0B750E001FFB31 /* FA_leftMenuImplementation.swift */; };
@@ -134,13 +133,13 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = "Pierre Laurac";
 				TargetAttributes = {
 					7AB38F8B1CEBC59E007C73F1 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = X549L7572J;
-						LastSwiftMigration = 0920;
+						LastSwiftMigration = 1000;
 					};
 				};
 			};
@@ -189,7 +188,6 @@
 				7AB38FA41CEBE173007C73F1 /* MillefeuilleviewController.swift in Sources */,
 				7AB38FA61CEBE279007C73F1 /* MillefeuilleMenuViewController.swift in Sources */,
 				7A019E611D0A0E6F00852D21 /* Master2ViewController.swift in Sources */,
-				7A019E671D0B5DB200852D21 /* README.md in Sources */,
 				7AB38F901CEBC59E007C73F1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -229,12 +227,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -283,12 +283,14 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -330,8 +332,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
 				PRODUCT_NAME = FA_UISplitViewController;
 				PROVISIONING_PROFILE = "";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -347,8 +348,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
 				PRODUCT_NAME = FA_UISplitViewController;
 				PROVISIONING_PROFILE = "";
-				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

@@ -47,9 +47,9 @@ open class MillefeuilleViewController: UIViewController {
   
   let panGestureXLocationStart: CGFloat = 70.0
   
-  open static let MILLEFEUILLE_SHOW_MENU = "MILLEFEUILLE_SHOW_MENU_NOTIFICATION_NAME"
+  public static let MILLEFEUILLE_SHOW_MENU = "MILLEFEUILLE_SHOW_MENU_NOTIFICATION_NAME"
   
-  open static let MILLEFEUILLE_HIDE_MENU = "MILLEFEUILLE_HIDE_MENU_NOTIFICATION_NAME"
+  public static let MILLEFEUILLE_HIDE_MENU = "MILLEFEUILLE_HIDE_MENU_NOTIFICATION_NAME"
   
   override open func viewDidLoad() {
     super.viewDidLoad()
@@ -482,10 +482,10 @@ class FA_SetSplitViewSegue: UIStoryboardSegue {
   override func perform() {
     if let source = self.source as? MillefeuilleViewController, let main = self.destination as? UISplitViewController {
       source.mainViewController = main
-      source.addChildViewController(self.destination)
+      source.addChild(self.destination)
       source.view.addSubview(self.destination.view)
       
-      self.destination.didMove(toParentViewController: source)
+      self.destination.didMove(toParent: source)
       self.destination.view.translatesAutoresizingMaskIntoConstraints = false
       self.destination.view.constraintTo(view: source.view)
 
@@ -509,10 +509,10 @@ class FA_SetSplitViewFromMenuSegue: UIStoryboardSegue {
       source.mainViewController = main
       
       // removing reference to previous child views and controller, otherwise we will never deinit the splitview controllers and memory will go off the charts
-      if let previousSplit = source.childViewControllers.first as? UISplitViewController {
+      if let previousSplit = source.children.first as? UISplitViewController {
         previousSplit.preferredDisplayMode = .primaryHidden
         previousSplit.view.removeFromSuperview()
-        previousSplit.removeFromParentViewController()
+        previousSplit.removeFromParent()
       }
       
       if let splitViewController = self.destination as? UISplitViewController {
@@ -524,10 +524,10 @@ class FA_SetSplitViewFromMenuSegue: UIStoryboardSegue {
       source.addSwipeGestureToMasterViewController()
       
       // Presenting the views and keeping reference to the controller
-      source.addChildViewController(self.destination)
+      source.addChild(self.destination)
       source.view.addSubview(self.destination.view)
       
-      self.destination.didMove(toParentViewController: source)
+      self.destination.didMove(toParent: source)
       self.destination.view.translatesAutoresizingMaskIntoConstraints = false
       self.destination.view.constraintTo(view: source.view)
     }
