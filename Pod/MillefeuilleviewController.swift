@@ -27,13 +27,24 @@ open class MillefeuilleViewController: UIViewController {
   open var leftViewController: UIViewController?
   
   /// The view that we display in overlay of the application while we display the left menu
-  fileprivate var viewOverlay = UIView()
+  open var viewOverlay = UIView()
   
+  let maxP1Width: CGFloat = 315
   /// Size of the overlay menu
-  var leftMenuWidth: CGFloat = 266.0
+  var leftMenuWidth: CGFloat {
+    guard let availableWidth = self.view.window?.frame.width else { return maxP1Width }
+    // We always want P1 to take at most 90% of the width
+    if availableWidth < maxP1Width * 1.1 {
+      return 0.9 * availableWidth
+    }
+    return maxP1Width
+  }
   
   /// Time duration for the show/hide menu animation
-  var animationTimeDuration: TimeInterval = 0.3
+  private var animationTimeDuration: TimeInterval = 0.4
+  private var dampingRatio: CGFloat = 0.9
+  private var openAnimationProgress: CGFloat = 0
+  private var closeAnimationProgress: CGFloat = 0
   
   /// the main view displayed at all time in the device. For now, only supporting UISplitViewController
   open var mainViewController: UISplitViewController!
@@ -43,13 +54,11 @@ open class MillefeuilleViewController: UIViewController {
   
   var leftMenuVisible: Bool = false
   
-  var gestureToDisplayOngoing: Bool = false
-  
-  let panGestureXLocationStart: CGFloat = 70.0
-  
   public static let MILLEFEUILLE_SHOW_MENU = "MILLEFEUILLE_SHOW_MENU_NOTIFICATION_NAME"
-  
   public static let MILLEFEUILLE_HIDE_MENU = "MILLEFEUILLE_HIDE_MENU_NOTIFICATION_NAME"
+  
+  private var openP1PropertyAnimator: UIViewPropertyAnimator?
+  private var closeP1PropertyAnimator: UIViewPropertyAnimator?
   
   override open func viewDidLoad() {
     super.viewDidLoad()
@@ -59,28 +68,22 @@ open class MillefeuilleViewController: UIViewController {
     self.performSegue(withIdentifier: loadMasterSegueIdentifier, sender: nil)
     self.performSegue(withIdentifier: loadMenuSegueIdentifier, sender: nil)
     
-    // Checks whether or not we should change the preferred Display mode to be .OverlayVisible or not
-    self.changePreferredDisplayMode(self.isPortrait())
-    
     // Registering to a show/hide events in order to display the left menu
     let center = NotificationCenter.default
-    center.addObserver(self, selector: #selector(MillefeuilleViewController.showMenus), name: NSNotification.Name(rawValue: MillefeuilleViewController.MILLEFEUILLE_SHOW_MENU), object: nil)
-    center.addObserver(self, selector: #selector(MillefeuilleViewController.hideMenuFromNotification), name: NSNotification.Name(rawValue: MillefeuilleViewController.MILLEFEUILLE_HIDE_MENU), object: nil)
+    center.addObserver(self, selector: #selector(showMenus), name: NSNotification.Name(rawValue: MillefeuilleViewController.MILLEFEUILLE_SHOW_MENU), object: nil)
+    center.addObserver(self, selector: #selector(hideMenuFromNotification), name: NSNotification.Name(rawValue: MillefeuilleViewController.MILLEFEUILLE_HIDE_MENU), object: nil)
     
     // Preparing the overlay view
-    let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.overlayViewWasSwiped))
-    swipeRecognizer.direction = .left
-    self.viewOverlay.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0)
-    self.viewOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.overlayViewWasTapped)))
-    self.viewOverlay.addGestureRecognizer(swipeRecognizer)
+    self.viewOverlay.backgroundColor = UIColor(red: 0.79, green: 0.8, blue: 0.83, alpha: 0.5)
+    self.viewOverlay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(overlayViewWasTapped)))
+    self.viewOverlay.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePanCloseGesture)))
     
     // Adding the left button on the detail view controller so that we can display the view controller if nothing is selected
     let navigationController = self.mainViewController.viewControllers[self.mainViewController.viewControllers.count-1] as! UINavigationController
     navigationController.topViewController!.navigationItem.leftBarButtonItem = self.mainViewController.displayModeButtonItem
     
-    self.leftViewController?.view.layer.shadowColor = UIColor.black.cgColor
-    self.leftViewController?.view.layer.shadowOffset = CGSize(width: 0, height: 0)
-    //self.leftViewController?.view.layer.shadowOpacity = 0.8
+    self.mainViewController.preferredDisplayMode = .allVisible
+    self.mainViewController.maximumPrimaryColumnWidth = 315
   }
   
   /**
@@ -88,36 +91,6 @@ open class MillefeuilleViewController: UIViewController {
    */
   open func closeLeftMenu(_ completion: (() -> Void)? = nil) {
     self.hideMenus(completion)
-  }
-  
-  /**
-   * Method called when the overlay receives a tap gesture
-   * The goal is to hide the menu and the overlay
-   */
-  @objc func overlayViewWasTapped() {
-    self.hideMenus()
-  }
-  
-  /**
-   * Method called when the overlay receives a swipe gesture
-   * The goal is to hide the menu and the overlay
-   */
-  @objc func overlayViewWasSwiped() {
-    self.hideMenus()
-  }
-  
-  /**
-   * This method checks if the iPad is in Portrait mode and if this is the first time we are displaying the view
-   * If this is the case we force the preferredDisplayMode to be PrimaryOverlay.
-   * Otherwise we let the UISplitViewController decide what it should be.
-   */
-  fileprivate func changePreferredDisplayMode(_ portrait: Bool) {
-    if portrait && self.isIpad() && !self.modeCheckedAtLaunch {
-      return self.mainViewController.preferredDisplayMode = .primaryOverlay
-    }
-    self.modeCheckedAtLaunch = true
-    
-    return self.mainViewController.preferredDisplayMode = .automatic
   }
   
   /**
@@ -133,22 +106,12 @@ open class MillefeuilleViewController: UIViewController {
   }
   
   func hideMenuFromCurrentFrame(_ duration: TimeInterval, shadowStart: Float, completion: (() -> Void)? = nil) {
-    self.leftMenuVisible = false
-    
-    let animation = CABasicAnimation(keyPath: "shadowOpacity")
-    animation.toValue = self.dropShadowOpacity
-    animation.fromValue = NSNumber(value: shadowStart as Float)
-    animation.duration = self.animationTimeDuration
-    self.leftViewController?.view.layer.add(animation, forKey: "shadowOpacity")
-    self.leftViewController?.view.layer.shadowOpacity = shadowStart
-    
-    UIView.animate(withDuration: self.animationTimeDuration, delay: 0.0, options: [.allowUserInteraction], animations: {
-      self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.withAlphaComponent(0.0)
-      self.leftViewController?.view.frame = CGRect(x: -self.leftMenuWidth, y: 0, width: self.leftMenuWidth, height: self.leftViewController!.view.frame.height)
-    }) { (_) in
-      self.removeMenusFromSuperview()
+    self.createClosePropertyAnimator()
+    self.closeP1PropertyAnimator?.addCompletion{ position in
+      guard position == .end else { return }
       completion?()
     }
+    self.closeP1PropertyAnimator?.startAnimation()
   }
   
   /**
@@ -166,12 +129,21 @@ open class MillefeuilleViewController: UIViewController {
     return (orientation == .portrait || orientation == .portraitUpsideDown)
   }
   
-  /**
-   * Check if the device is in Landscape mode
-   */
-  override open func willRotate(to toInterfaceOrientation: UIInterfaceOrientation, duration: TimeInterval) {
-    self.hideMenusImmediately()
-    self.changePreferredDisplayMode(!self.isPortrait())
+  open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+    super.viewWillTransition(to: size, with: coordinator)
+    coordinator.animate(alongsideTransition: { ctx in
+      self.view.frame.origin = CGPoint(x: 0, y: 0)
+      if let leftViewController = self.leftViewController {
+        self.leftViewController?.view.frame.origin.x = -leftViewController.view.frame.width
+        self.leftViewController?.view.frame.size.height = size.height
+      }
+      self.viewOverlay.alpha = 0
+      self.viewOverlay.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
+    }) { ctx in
+      guard ctx.isCancelled == false else { return }
+      self.removeMenusFromSuperview()
+      self.leftMenuVisible = false
+    }
   }
   
   /**
@@ -181,24 +153,12 @@ open class MillefeuilleViewController: UIViewController {
   @objc func showMenus() {
     self.leftMenuVisible = true
     self.addLeftMenuToKeyWindow()
-    self.showMenuFromCurrentFrame(self.animationTimeDuration, shadowStart: self.dropShadowOpacity)
+    self.showMenuFromCurrentFrame()
   }
   
-  fileprivate func showMenuFromCurrentFrame(_ animationDuration: TimeInterval, shadowStart: Float) {
-    guard let leftMenuView = self.leftViewController?.view else { return }
-    
-    let animation = CABasicAnimation(keyPath: "shadowOpacity")
-    animation.toValue = NSNumber(value: shadowStart as Float)
-    animation.fromValue = self.dropShadowOpacity
-    animation.duration = self.animationTimeDuration
-    leftMenuView.layer.add(animation, forKey: "shadowOpacity")
-    leftMenuView.layer.shadowOpacity = self.dropShadowOpacity
-
-    
-    UIView.animate(withDuration: self.animationTimeDuration, delay: 0.0, options: [.allowUserInteraction], animations: { 
-      self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.withAlphaComponent(0.5)
-      leftMenuView.frame = CGRect(x: 0, y: 0, width: self.leftMenuWidth, height: leftMenuView.frame.height)
-    }, completion: nil)
+  fileprivate func showMenuFromCurrentFrame() {
+    self.createOpenPropertyAnimator()
+    self.openP1PropertyAnimator?.startAnimation()
   }
   
   open func selectionWasMade(hide: Bool) {
@@ -242,13 +202,6 @@ open class MillefeuilleViewController: UIViewController {
     return nil
   }
   
-  /**
-   * Method to call in order to hide the menus without animation.
-   */
-  fileprivate func hideMenusImmediately() {
-    self.removeMenusFromSuperview()
-    self.leftMenuVisible = false
-  }
   
   /**
    * Removes the menu from the superview in order:
@@ -274,19 +227,12 @@ open class MillefeuilleViewController: UIViewController {
    * - Ensure the left controller's view has the right size and position
    */
   fileprivate func addLeftMenuToKeyWindow() {
-    guard let leftVC = self.leftViewController else {
-      return
-    }
-    
-    guard let keyWindow = UIApplication.shared.keyWindow else {
-      return
-    }
+    guard let leftVC = self.leftViewController,
+      let keyWindow = UIApplication.shared.keyWindow else { return }
     
     let o = UIScreen.main.bounds
-    let newFrame = CGRect(x: 0, y: 0, width: o.width, height: o.height)
-    self.viewOverlay.frame = newFrame
+    self.viewOverlay.frame = CGRect(x: 0, y: 0, width: o.width, height: o.height)
     keyWindow.addSubview(self.viewOverlay)
-    
     leftVC.view.frame = CGRect(x: -self.leftMenuWidth, y: 0, width: self.leftMenuWidth, height: o.height)
     keyWindow.addSubview(leftVC.view)
   }
@@ -300,7 +246,7 @@ open class MillefeuilleViewController: UIViewController {
     guard let nav = master.viewControllers.first as? UINavigationController else { return }
     guard let view = nav.viewControllers.first?.view else { return }
     
-    let panGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(MillefeuilleViewController.handlePanGesture(_:)))
+    let panGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(handlePanOpenGesture))
     panGestureRecognizer.edges = [.left]
     panGestureRecognizer.delegate = self
     view.addGestureRecognizer(panGestureRecognizer)
@@ -320,81 +266,150 @@ extension MillefeuilleViewController: UISplitViewControllerDelegate {
 }
 
 extension MillefeuilleViewController: UIGestureRecognizerDelegate {
-  @objc func handlePanGesture(_ recognizer: UIPanGestureRecognizer) {
+  
+  private var hasRunningAnimations: Bool {
+    return self.openP1PropertyAnimator?.isRunning ?? false || self.closeP1PropertyAnimator?.isRunning ?? false
+  }
+  
+  private func createClosePropertyAnimator() {
+    guard !self.hasRunningAnimations,
+      let leftMenuView = self.leftViewController?.view else { return }
+
+    self.viewOverlay.alpha = 0.75
+
+    self.closeP1PropertyAnimator = UIViewPropertyAnimator(duration: self.animationTimeDuration, dampingRatio: self.dampingRatio, animations: {
+      self.viewOverlay.alpha = 0.0
+      leftMenuView.frame = CGRect(x: -self.leftMenuWidth, y: 0, width: self.leftMenuWidth, height: leftMenuView.frame.height)
+      self.view.frame.origin.x = 0
+      // Needed to properly update the safe area in P2
+      self.view.layoutIfNeeded()
+    })
+    self.closeP1PropertyAnimator?.isUserInteractionEnabled = false
+    self.closeP1PropertyAnimator?.addCompletion({ position in
+      if position == .end {
+        self.leftMenuVisible = false
+        self.removeMenusFromSuperview()
+      }
+      self.closeP1PropertyAnimator = nil
+    })
+    self.closeP1PropertyAnimator?.startAnimation()
+  }
+  
+  private func createOpenPropertyAnimator() {
+    guard !self.hasRunningAnimations,
+          let leftMenuView = self.leftViewController?.view else { return }
+    
+    self.addLeftMenuToKeyWindow()
+    
+    self.viewOverlay.alpha = 0.0
+    self.view.frame.origin.x = 0
+    
+    leftMenuView.frame.origin = CGPoint(x: -self.leftMenuWidth, y: 0)
+    leftMenuView.frame.size = CGSize(width: self.leftMenuWidth, height: self.view.frame.height)
+    
+    self.openP1PropertyAnimator = UIViewPropertyAnimator(duration: self.animationTimeDuration, dampingRatio: self.dampingRatio, animations: {
+      self.viewOverlay.alpha = 0.75
+      leftMenuView.frame = CGRect(x: 0, y: 0, width: self.leftMenuWidth, height: self.view.frame.height)
+      self.view.frame.origin.x = self.leftMenuWidth
+      // Needed to properly update the safe area in P2
+      self.view.layoutIfNeeded()
+    })
+    self.openP1PropertyAnimator?.isUserInteractionEnabled = false
+    self.openP1PropertyAnimator?.addCompletion({ position in
+      if position == .start {
+        self.leftMenuVisible = false
+        self.removeMenusFromSuperview()
+      }
+      self.openP1PropertyAnimator = nil
+    })
+    self.openP1PropertyAnimator?.startAnimation()
+  }
+  
+  @objc func overlayViewWasTapped(_ recognizer: UITapGestureRecognizer) {
+    self.createClosePropertyAnimator()
+  }
+  
+  @objc func handlePanCloseGesture(_ recognizer: UIPanGestureRecognizer) {
+    guard let gestureView = self.mainViewController.viewControllers.first?.view,
+      let leftMenuView = self.leftViewController?.view else { return }
+    
+    let gestureTranslation = recognizer.translation(in: gestureView).x
+    let velocityX = recognizer.velocity(in: gestureView).x
+    let horizontalChange = min(gestureTranslation, self.leftMenuWidth)
+    
+    switch recognizer.state {
+    case .began:
+      self.createClosePropertyAnimator()
+      self.closeP1PropertyAnimator?.pauseAnimation()
+      self.closeP1PropertyAnimator?.isReversed = false
+      if let closeP1Animator = self.closeP1PropertyAnimator {
+        self.closeAnimationProgress = closeP1Animator.fractionComplete
+      }
+    case .changed:
+      self.closeP1PropertyAnimator?.isReversed = false
+      self.closeP1PropertyAnimator?.fractionComplete = (-horizontalChange / self.leftMenuWidth) + self.closeAnimationProgress
+    case .ended, .cancelled:
+      let fractionComplete = self.closeP1PropertyAnimator?.fractionComplete ?? 0
+      let remainingDistance = -gestureTranslation
+      switch velocityX {
+      case -100...100:
+        if remainingDistance > self.leftMenuWidth / 2 {
+          self.closeP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+        } else {
+          self.closeP1PropertyAnimator?.isReversed = true
+          self.closeP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+        }
+      case 100...:
+        self.closeP1PropertyAnimator?.isReversed = true
+        self.closeP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+      case ...(-100):
+        self.closeP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+      default:
+        ()
+      }
+    default:
+      ()
+    }
+  }
+  
+  @objc func handlePanOpenGesture(_ recognizer: UIPanGestureRecognizer) {
     guard let gestureView = self.mainViewController.viewControllers.first?.view else { return }
-    guard let leftMenuView = self.leftViewController?.view else { return }
     
     // Simple gesture with no drag and drop
-    let gestureTranslation = recognizer.translation(in: gestureView).x,
-        horizontalChange = (gestureTranslation < self.leftMenuWidth) ? gestureTranslation : self.leftMenuWidth,
-        positionStart = (-self.leftMenuWidth + horizontalChange),
-        distance = (horizontalChange / self.leftMenuWidth),
-        shadow = Float(distance * 0.8),
-        alpha = distance * 0.5
+    let gestureTranslation = recognizer.translation(in: gestureView).x
+    let horizontalChange = min(gestureTranslation, self.leftMenuWidth)
     
-    switch(recognizer.state) {
+    switch recognizer.state {
     case .began:
-      self.gestureToDisplayOngoing = true
-      self.addLeftMenuToKeyWindow()
-      break
+      self.createOpenPropertyAnimator()
+      self.openP1PropertyAnimator?.pauseAnimation()
+      self.openP1PropertyAnimator?.isReversed = false
+      self.openAnimationProgress = self.openP1PropertyAnimator?.fractionComplete ?? 0
     case .changed:
-      
-      self.viewOverlay.backgroundColor = self.viewOverlay.backgroundColor?.withAlphaComponent(alpha)
-      leftMenuView.frame = CGRect(x: positionStart, y: 0, width: self.leftMenuWidth, height: leftMenuView.frame.height)
-      leftMenuView.layer.shadowOpacity = shadow
-      break
-      
-    case .ended:
-      self.gestureToDisplayOngoing = false
-      
-      // the gesture went further that the menu size, the menu is fully expanded, exiting
-      if gestureTranslation >= self.leftMenuWidth {
-        return
-      }
-      
-      let velocityX = recognizer.velocity(in: gestureView).x,
-          remainingDistance = self.leftMenuWidth - gestureTranslation,
-          duration = Double(remainingDistance / velocityX)
-      
-      // positive velocity, we are opening the menu, 
-      // let's check the velocity to decide wether to close or open
-      if velocityX > 0 {
-
-        // if the velocity is fast, let's open the menu right away at the correct speed
-        if velocityX > 100 {
-          self.showMenuFromCurrentFrame(duration, shadowStart: shadow)
-          return
-        }
-        
-        // velocity is slow, let's check how much we opened of the menu. if more than half, open the menu
+      self.openP1PropertyAnimator?.isReversed = false
+      self.openP1PropertyAnimator?.fractionComplete = (horizontalChange / self.leftMenuWidth) + self.openAnimationProgress
+    case .ended, .cancelled:
+      let velocityX = recognizer.velocity(in: gestureView).x
+      let remainingDistance = self.leftMenuWidth - gestureTranslation
+      let fractionComplete = self.openP1PropertyAnimator?.fractionComplete ?? 0
+      switch velocityX {
+      case -100...100:
         if remainingDistance < self.leftMenuWidth / 2 {
-          self.showMenuFromCurrentFrame(duration, shadowStart: shadow)
-          return
+          self.openP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+        } else {
+          self.openP1PropertyAnimator?.isReversed = true
+          self.openP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
         }
-        
-        // let's hide it
-        self.hideMenuFromCurrentFrame(duration, shadowStart: shadow)
-        return
+      case 100...:
+        self.openP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+      case ...(-100):
+        self.openP1PropertyAnimator?.isReversed = true
+        self.openP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+      default:
+        ()
       }
-      
-      // with a negative velocity, we are potentially closing the menu
-      // let's checking the velocity to decide
-      if velocityX < -150 {
-        self.hideMenuFromCurrentFrame(duration, shadowStart: shadow)
-        return
-      }
-      
-      // velocity is slow, let's check how much we closed of the menu. if more than half, open the menu
-      if remainingDistance < self.leftMenuWidth / 2 {
-        self.showMenuFromCurrentFrame(duration, shadowStart: shadow)
-        return
-      }
-      
-      // let's hide it
-      self.hideMenuFromCurrentFrame(duration, shadowStart: shadow)
-      return
     default:
-      break
+      ()
     }
   }
   
@@ -465,7 +480,7 @@ fileprivate extension UIView {
       self.bottomAnchor.constraint(equalTo: view.bottomAnchor),
       self.leftAnchor.constraint(equalTo: view.leftAnchor),
       self.rightAnchor.constraint(equalTo: view.rightAnchor)
-    ])
+      ])
   }
 }
 
@@ -488,7 +503,7 @@ class FA_SetSplitViewSegue: UIStoryboardSegue {
       self.destination.didMove(toParent: source)
       self.destination.view.translatesAutoresizingMaskIntoConstraints = false
       self.destination.view.constraintTo(view: source.view)
-
+      
       source.addSwipeGestureToMasterViewController()
       
       if let splitViewController = self.destination as? UISplitViewController {
@@ -511,6 +526,7 @@ class FA_SetSplitViewFromMenuSegue: UIStoryboardSegue {
       // removing reference to previous child views and controller, otherwise we will never deinit the splitview controllers and memory will go off the charts
       if let previousSplit = source.children.first as? UISplitViewController {
         previousSplit.preferredDisplayMode = .primaryHidden
+        previousSplit.willMove(toParent: nil)
         previousSplit.view.removeFromSuperview()
         previousSplit.removeFromParent()
       }
