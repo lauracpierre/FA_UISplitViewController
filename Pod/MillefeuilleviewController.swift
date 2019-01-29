@@ -62,7 +62,6 @@ open class MillefeuilleViewController: UIViewController {
   
   override open func viewDidLoad() {
     super.viewDidLoad()
-    
     // Performing the two segues right now creates the view controllers needed for the application.
     // It uses custom Segues in order to get a reference to the view controller
     self.performSegue(withIdentifier: loadMasterSegueIdentifier, sender: nil)
@@ -202,6 +201,14 @@ open class MillefeuilleViewController: UIViewController {
     return nil
   }
   
+  /**
+   * Method to call in order to hide the menus without animation.
+   */
+  public func hideMenusImmediately() {
+    self.removeMenusFromSuperview()
+    self.leftMenuVisible = false
+    self.view.frame.origin = .zero
+  }
   
   /**
    * Removes the menu from the superview in order:
@@ -228,6 +235,7 @@ open class MillefeuilleViewController: UIViewController {
    */
   fileprivate func addLeftMenuToKeyWindow() {
     guard let leftVC = self.leftViewController,
+      leftVC.view.window == nil, // check if the menu is not already in the view hierarchy
       let keyWindow = UIApplication.shared.keyWindow else { return }
     
     let o = UIScreen.main.bounds
@@ -275,8 +283,6 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
     guard !self.hasRunningAnimations,
       let leftMenuView = self.leftViewController?.view else { return }
 
-    self.viewOverlay.alpha = 0.75
-
     self.closeP1PropertyAnimator = UIViewPropertyAnimator(duration: self.animationTimeDuration, dampingRatio: self.dampingRatio, animations: {
       self.viewOverlay.alpha = 0.0
       leftMenuView.frame = CGRect(x: -self.leftMenuWidth, y: 0, width: self.leftMenuWidth, height: leftMenuView.frame.height)
@@ -301,12 +307,6 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
     
     self.addLeftMenuToKeyWindow()
     
-    self.viewOverlay.alpha = 0.0
-    self.view.frame.origin.x = 0
-    
-    leftMenuView.frame.origin = CGPoint(x: -self.leftMenuWidth, y: 0)
-    leftMenuView.frame.size = CGSize(width: self.leftMenuWidth, height: self.view.frame.height)
-    
     self.openP1PropertyAnimator = UIViewPropertyAnimator(duration: self.animationTimeDuration, dampingRatio: self.dampingRatio, animations: {
       self.viewOverlay.alpha = 0.75
       leftMenuView.frame = CGRect(x: 0, y: 0, width: self.leftMenuWidth, height: self.view.frame.height)
@@ -316,11 +316,11 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
     })
     self.openP1PropertyAnimator?.isUserInteractionEnabled = false
     self.openP1PropertyAnimator?.addCompletion({ position in
+      self.openP1PropertyAnimator = nil
       if position == .start {
         self.leftMenuVisible = false
         self.removeMenusFromSuperview()
       }
-      self.openP1PropertyAnimator = nil
     })
     self.openP1PropertyAnimator?.startAnimation()
   }
@@ -356,12 +356,12 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
         if remainingDistance > self.leftMenuWidth / 2 {
           self.closeP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
         } else {
-          self.closeP1PropertyAnimator?.isReversed = true
-          self.closeP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+          self.closeP1PropertyAnimator?.stopAnimation(false)
+          self.createOpenPropertyAnimator()
         }
       case 100...:
-        self.closeP1PropertyAnimator?.isReversed = true
-        self.closeP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+        self.closeP1PropertyAnimator?.stopAnimation(false)
+        self.createOpenPropertyAnimator()
       case ...(-100):
         self.closeP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
       default:
@@ -397,14 +397,14 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
         if remainingDistance < self.leftMenuWidth / 2 {
           self.openP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
         } else {
-          self.openP1PropertyAnimator?.isReversed = true
-          self.openP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+          self.openP1PropertyAnimator?.stopAnimation(false)
+          self.createClosePropertyAnimator()
         }
       case 100...:
         self.openP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
       case ...(-100):
-        self.openP1PropertyAnimator?.isReversed = true
-        self.openP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
+        self.openP1PropertyAnimator?.stopAnimation(false)
+        self.createClosePropertyAnimator()
       default:
         ()
       }
@@ -496,12 +496,12 @@ fileprivate extension UIView {
 class FA_SetSplitViewSegue: UIStoryboardSegue {
   override func perform() {
     if let source = self.source as? MillefeuilleViewController, let main = self.destination as? UISplitViewController {
+      self.destination.view.translatesAutoresizingMaskIntoConstraints = false
       source.mainViewController = main
       source.addChild(self.destination)
       source.view.addSubview(self.destination.view)
       
       self.destination.didMove(toParent: source)
-      self.destination.view.translatesAutoresizingMaskIntoConstraints = false
       self.destination.view.constraintTo(view: source.view)
       
       source.addSwipeGestureToMasterViewController()
@@ -540,11 +540,11 @@ class FA_SetSplitViewFromMenuSegue: UIStoryboardSegue {
       source.addSwipeGestureToMasterViewController()
       
       // Presenting the views and keeping reference to the controller
+      self.destination.view.translatesAutoresizingMaskIntoConstraints = false
       source.addChild(self.destination)
       source.view.addSubview(self.destination.view)
       
       self.destination.didMove(toParent: source)
-      self.destination.view.translatesAutoresizingMaskIntoConstraints = false
       self.destination.view.constraintTo(view: source.view)
     }
   }
