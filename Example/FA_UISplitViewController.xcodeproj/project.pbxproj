@@ -139,13 +139,13 @@
 					7AB38F8B1CEBC59E007C73F1 = {
 						CreatedOnToolsVersion = 7.3;
 						DevelopmentTeam = X549L7572J;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1020;
 					};
 				};
 			};
 			buildConfigurationList = 7AB38F871CEBC59E007C73F1 /* Build configuration list for PBXProject "FA_UISplitViewController" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -332,7 +332,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
 				PRODUCT_NAME = FA_UISplitViewController;
 				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -348,7 +348,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = FA.UISplitViewController;
 				PRODUCT_NAME = FA_UISplitViewController;
 				PROVISIONING_PROFILE = "";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};

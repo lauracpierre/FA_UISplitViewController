@@ -330,8 +330,7 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
   }
   
   @objc func handlePanCloseGesture(_ recognizer: UIPanGestureRecognizer) {
-    guard let gestureView = self.mainViewController.viewControllers.first?.view,
-      let leftMenuView = self.leftViewController?.view else { return }
+    guard let gestureView = self.mainViewController.viewControllers.first?.view, self.leftViewController?.view != nil else { return }
     
     let gestureTranslation = recognizer.translation(in: gestureView).x
     let velocityX = recognizer.velocity(in: gestureView).x
@@ -348,8 +347,9 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
     case .changed:
       self.closeP1PropertyAnimator?.isReversed = false
       self.closeP1PropertyAnimator?.fractionComplete = (-horizontalChange / self.leftMenuWidth) + self.closeAnimationProgress
-    case .ended, .cancelled:
-      let fractionComplete = self.closeP1PropertyAnimator?.fractionComplete ?? 0
+    case .ended where self.closeP1PropertyAnimator?.state != .stopped,
+         .cancelled where self.closeP1PropertyAnimator?.state != .stopped:
+
       let remainingDistance = -gestureTranslation
       switch velocityX {
       case -100...100:
@@ -365,10 +365,10 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
       case ...(-100):
         self.closeP1PropertyAnimator?.continueAnimation(withTimingParameters: nil, durationFactor: 1)
       default:
-        ()
+        break
       }
     default:
-      ()
+      break
     }
   }
   
@@ -391,7 +391,7 @@ extension MillefeuilleViewController: UIGestureRecognizerDelegate {
     case .ended, .cancelled:
       let velocityX = recognizer.velocity(in: gestureView).x
       let remainingDistance = self.leftMenuWidth - gestureTranslation
-      let fractionComplete = self.openP1PropertyAnimator?.fractionComplete ?? 0
+      
       switch velocityX {
       case -100...100:
         if remainingDistance < self.leftMenuWidth / 2 {
